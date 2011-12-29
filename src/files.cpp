@@ -78,7 +78,6 @@ void initdb()
       }
     }
   }
-  new_error("Testing to write an error.", "files.cpp", "initdb()");
 }
 
 

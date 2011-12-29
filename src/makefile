@@ -6,10 +6,10 @@ LFLAGS = -Wall
 handleproject : $(OBJS)
 	$(CC) $(LFLAGS) $(OBJS) -o handleproject
 
-files.o : files.h
+files.o : files.h files.cpp
 	$(CC) $(CFLAGS) files.cpp
 
-main.o : files.h
+main.o : files.h main.cpp
 	$(CC) $(CFLAGS) main.cpp
 
 clean :
