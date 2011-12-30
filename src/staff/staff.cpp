@@ -18,20 +18,20 @@
  *                                                                          *
  ****************************************************************************/
 
-/* This is where the main loop starts for Handle Project.
- * Database is initialized if needed and the main gtk+ loop
- * is started.
- */
+#include "staff.h"
 
-#include "files.h"
+Staff::Staff(std::string name, std::string surname, std::string profesion, 
+	     int week_working_hours)
+  : name(name), surname(surname), profession(profession), 
+    week_working_hours(week_working_hours)
+{}
 
-//testing
-//#include "xmlstr.h"
-//#include <iostream>
-
-using namespace std;
-
-int main (int argc, char *argv[])
+std::string Staff::get_obj_xml_str()
 {
-	initdb();
+  return "";
+}
+
+std::string Staff::get_DTD_str()
+{
+  return "";
 }

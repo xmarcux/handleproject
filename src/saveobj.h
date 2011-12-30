@@ -18,20 +18,39 @@
  *                                                                          *
  ****************************************************************************/
 
-/* This is where the main loop starts for Handle Project.
- * Database is initialized if needed and the main gtk+ loop
- * is started.
+#ifndef SAVEOBJ_H
+#define SAVEOBJ_H
+
+#include <string>
+
+/* Saveobj should be subclassed
+ * by classes that is going to be saved.
+ * Will force classes to implement functions
+ * needed for saving.
  */
 
-#include "files.h"
-
-//testing
-//#include "xmlstr.h"
-//#include <iostream>
-
-using namespace std;
-
-int main (int argc, char *argv[])
+class Saveobj
 {
-	initdb();
-}
+ public:
+  /* All classes should create a complete
+   * xml string containing all variables
+   * in the object. This string will be
+   * used for saving object to file.
+   */
+  virtual std::string get_obj_xml_str() = 0;
+
+ private:
+  /* All classes should create a 
+   * unique DTD string to be used 
+   * when the xml string is created.
+   * Example DTD:
+   * <!DOCTYPE obj [
+   *   <!ELEMENT obj (child1, child2)>
+   *   <!ELEMENT child1    (#CDATA)>
+   *   <!ELEMENT child2    (#CDATA)>
+   * ]>
+   */
+  virtual std::string get_DTD_str() = 0;
+};
+
+#endif

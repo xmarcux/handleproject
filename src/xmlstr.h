@@ -18,20 +18,39 @@
  *                                                                          *
  ****************************************************************************/
 
-/* This is where the main loop starts for Handle Project.
- * Database is initialized if needed and the main gtk+ loop
- * is started.
+#ifndef XMLSTR_H
+#define XMLSTR_H
+
+#include <string>
+
+/* Returns the xml header 
+ * with version tag, ends 
+ * with newline.
  */
+std::string get_xml_head();
 
-#include "files.h"
+/* Returns the open tag for the main object.
+ * All other tags should be put inside of this tag.
+ * When all other tags are written function
+ * get_first_level_close_tag returns the closing tag
+ * that "closes" this opening tag.
+ * Ends with newline.
+ */
+std::string get_first_level_open_tag(std::string head);
 
-//testing
-//#include "xmlstr.h"
-//#include <iostream>
+/* Returns the closing tag and should be called after
+ * get_first_level_open_tag and all other objects tags.
+ * "Closes" the tag returned form function
+ * get_first_level_open_tag.
+ * Ends with newline.
+ */
+std::string get_first_level_close_tag(std::string tail);
 
-using namespace std;
+/* Returns a string with both an opening and closing tag with
+ * content inside.
+ * Is moved in with a tab.
+ * Ends with a newline.
+ */
+std::string get_second_level_object(std::string tag, std::string content);
 
-int main (int argc, char *argv[])
-{
-	initdb();
-}
+#endif

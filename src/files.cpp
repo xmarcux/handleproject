@@ -32,11 +32,6 @@ const char *projpath = "haprdb/projects";
 const char *staffpath = "haprdb/staff";
 const char *errfile = "error";
 
-/* Functon initializes database if it does not
- * already exists. 
- * It creates directories needed for Handle Project.
- */
-
 void initdb()
 {
   struct stat state_db;
@@ -80,14 +75,6 @@ void initdb()
   }
 }
 
-
-/* Writes errortext to error file.
- * Variable in_file is supposed to specify in 
- * which file that the function is called from
- * and in_function is supposed to specify in which
- * function or object the function is called from.
- * Current date and timestamp is added to file as well.
- */
 
 void new_error(string err_text, string in_file, string in_function)
 {

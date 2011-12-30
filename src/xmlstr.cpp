@@ -18,20 +18,24 @@
  *                                                                          *
  ****************************************************************************/
 
-/* This is where the main loop starts for Handle Project.
- * Database is initialized if needed and the main gtk+ loop
- * is started.
- */
+#include "xmlstr.h"
 
-#include "files.h"
-
-//testing
-//#include "xmlstr.h"
-//#include <iostream>
-
-using namespace std;
-
-int main (int argc, char *argv[])
+std::string get_xml_head()
 {
-	initdb();
+  return "<?xml version=\"1.0\" ?>\n";
+}
+
+std::string get_first_level_open_tag(std::string head)
+{
+  return "<" + head + ">\n";
+}
+
+std::string get_first_level_close_tag(std::string tail)
+{
+  return "</" + tail + ">\n";
+}
+
+std::string get_second_level_object(std::string tag, std::string content)
+{
+  return "\t<" + tag + ">" + content + "</" + tag + ">\n";
 }

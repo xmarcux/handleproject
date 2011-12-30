@@ -18,20 +18,42 @@
  *                                                                          *
  ****************************************************************************/
 
-/* This is where the main loop starts for Handle Project.
- * Database is initialized if needed and the main gtk+ loop
- * is started.
- */
+#ifndef STAFF_H
+#define STAFF_H
 
-#include "files.h"
+#include "../saveobj.h"
+#include <string>
 
-//testing
-//#include "xmlstr.h"
-//#include <iostream>
-
-using namespace std;
-
-int main (int argc, char *argv[])
+class Staff : public Saveobj
 {
-	initdb();
-}
+ public:
+  Staff(std::string name, std::string surname, std::string profession, 
+	int week_working_hours);
+  /*  Staff(std::string name, std::string surname, std::string profession);
+  Staff(std::string name, std::string surname);
+  Staff(std::string name, std::string profession);
+  Staff(std::string name);
+
+  get_name() const;
+  get_surname() const;
+  get_profession() const;
+  get_week_working_hours() const;
+  xml_str() const;
+
+  set_name(std::string);
+  set_surname(std::string);
+  set_profession(std::string);
+  set_week_working_hours(int hours);
+  */
+  std::string get_obj_xml_str();
+
+ private:
+  std::string name;
+  std::string surname;
+  std::string profession;
+  int week_working_hours;
+
+  std::string get_DTD_str();
+};
+
+#endif
