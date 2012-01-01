@@ -1,7 +1,7 @@
 /****************************************************************************
  *                                                                          *
  *    Handle Project, an application for managing projects and employees.   *
- *    Copyright (C) 2011  Marcus Pedersén marcux@handleproject.org          *
+ *    Copyright (C) 2011, 2012  Marcus Pedersén marcux@handleproject.org    *
  *                                                                          *
  *    This program is free software: you can redistribute it and/or modify  *
  *    it under the terms of the GNU General Public License as published by  *
@@ -19,19 +19,198 @@
  ****************************************************************************/
 
 #include "staff.h"
+#include "../xmlstr.h"
+#include <sstream>
 
-Staff::Staff(std::string name, std::string surname, std::string profesion, 
-	     int week_working_hours)
-  : name(name), surname(surname), profession(profession), 
-    week_working_hours(week_working_hours)
-{}
-
-std::string Staff::get_obj_xml_str()
+Staff::Staff(std::string name, std::string surname, std::string profession, 
+	     double week_hours)
+  : name(name), surname(surname), profession(profession)
 {
-  return "";
+  if(week_hours > -1)
+  {
+    week_working_hours = week_hours;
+  }
+  else
+  {
+    week_working_hours = 40.0;
+  }
+  day_working_hours = 8.0;
+  working_days_per_week = 5.0;
 }
 
-std::string Staff::get_DTD_str()
+Staff::Staff(std::string name, std::string surname, std::string profession,
+	     double day_hours, double days_per_week)
+  : name(name), surname(surname), profession(profession)
 {
-  return "";
+  if(day_hours > -1)
+  {
+      day_working_hours = day_hours;
+  }
+  else
+  {
+    day_working_hours = 8.0;
+  }
+
+  if(days_per_week > -1)
+  {
+    working_days_per_week = days_per_week;
+  }
+  else
+  {
+    working_days_per_week = 5.0;
+  }
+
+  if(day_working_hours > 0 && working_days_per_week > 0)
+  {
+    week_working_hours = day_working_hours * working_days_per_week;
+  }
+  else
+  {
+    week_working_hours = 40.0;
+  }
+}
+
+
+Staff::Staff(std::string name, std::string surname, std::string profession)
+  : name(name), surname(surname), profession(profession)
+{
+  week_working_hours = 40.0;
+  day_working_hours = 8.0;
+  working_days_per_week = 5.0;
+}
+
+Staff::Staff(std::string name, std::string surname)
+  : name(name), surname(surname)
+{
+  week_working_hours = 40.0;
+  day_working_hours = 8.0;
+  working_days_per_week = 5.0;
+  profession = "";
+}
+
+Staff::Staff(std::string name)
+  : name(name)
+{
+  week_working_hours = 40.0;
+  day_working_hours = 8.0;
+  working_days_per_week = 5.0;
+  profession = "";
+  surname = "";
+}
+
+std::string Staff::get_name() const
+{
+  return name;
+}
+
+std::string Staff::get_surname() const
+{
+  return surname;
+}
+
+std::string Staff::get_profession() const
+{
+  return profession;
+}
+
+double Staff::get_week_working_hours() const
+{
+  return week_working_hours;
+}
+
+double Staff::get_day_working_hours() const
+{
+  return day_working_hours;
+}
+
+double Staff::get_working_days_per_week() const
+{
+  return working_days_per_week;
+}
+
+void Staff::set_name(std::string n)
+{
+  name = n;
+}
+
+void Staff::set_surname(std::string sname)
+{
+  surname = sname;
+}
+
+void Staff::set_profession(std::string prof)
+{
+  profession = prof;
+}
+
+void Staff::set_week_working_hours(double hours)
+{
+  if(hours > -1)
+  {
+    week_working_hours = hours;    
+  }
+
+  if(working_days_per_week > 0 && hours > 0)
+  {
+    day_working_hours = week_working_hours/working_days_per_week;
+  }
+}
+
+void Staff::set_day_working_hours(double hours)
+{
+  if(hours > -1)
+  {
+    day_working_hours = hours;
+  }
+
+  if(working_days_per_week > 0 && hours > 0)
+  {
+    week_working_hours = working_days_per_week * day_working_hours;
+  }
+}
+
+void Staff::set_working_days_per_week(double days)
+{
+  if(days > -1)
+  {
+    working_days_per_week = days;
+  }
+
+  if(day_working_hours > 0 && days > 0)
+  {
+    week_working_hours = day_working_hours * working_days_per_week;
+  }
+}
+
+std::string Staff::get_obj_xml_str() const
+{
+  std::string xmlstr = get_xml_head();
+  std::ostringstream sstream, sstream2, sstream3;
+  xmlstr += get_DTD_str();
+  xmlstr += get_first_level_open_tag("staff");
+  xmlstr += get_second_level_object("name",name);
+  xmlstr += get_second_level_object("surname",surname);
+  xmlstr += get_second_level_object("profession",profession);
+  sstream << week_working_hours;
+  xmlstr += get_second_level_object("week_hours",sstream.str());
+  sstream2 << day_working_hours;
+  xmlstr += get_second_level_object("day_hours",sstream2.str());
+  sstream3 << working_days_per_week;
+  xmlstr += get_second_level_object("days_per_week",sstream3.str());
+  xmlstr += get_first_level_close_tag("staff");
+  return xmlstr;
+}
+
+std::string Staff::get_DTD_str() const
+{
+  std::string dtdstr = "<!DOCTYPE staff [";
+  dtdstr += "\n\t<!ELEMENT staff(name, surname, profession, week_hours, day_hours, days_per_week)>";
+  dtdstr += "\n\t<!ELEMENT name\t\t(#CDATA)>";
+  dtdstr += "\n\t<!ELEMENT surname\t(#CDATA)>";
+  dtdstr += "\n\t<!ELEMENT profession\t(#CDATA)>";
+  dtdstr += "\n\t<!ELEMENT week_hours\t(#CDATA)>";
+  dtdstr += "\n\t<!ELEMENT day_hours\t(#CDATA)>";
+  dtdstr += "\n\t<!ELEMENT days_per_week\t(#CDATA)>";
+  dtdstr += "\n]>\n";
+  return dtdstr;
 }

@@ -1,7 +1,7 @@
 /****************************************************************************
  *                                                                          *
  *    Handle Project, an application for managing projects and employees.   *
- *    Copyright (C) 2011  Marcus Pedersén marcux@handleproject.org          *
+ *    Copyright (C) 2011, 2012  Marcus Pedersén marcux@handleproject.org    *
  *                                                                          *
  *    This program is free software: you can redistribute it and/or modify  *
  *    it under the terms of the GNU General Public License as published by  *
@@ -37,7 +37,7 @@ class Saveobj
    * in the object. This string will be
    * used for saving object to file.
    */
-  virtual std::string get_obj_xml_str() = 0;
+  virtual std::string get_obj_xml_str() const  = 0;
 
  private:
   /* All classes should create a 
@@ -50,7 +50,7 @@ class Saveobj
    *   <!ELEMENT child2    (#CDATA)>
    * ]>
    */
-  virtual std::string get_DTD_str() = 0;
+  virtual std::string get_DTD_str() const = 0;
 };
 
 #endif

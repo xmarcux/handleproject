@@ -1,7 +1,7 @@
 /****************************************************************************
  *                                                                          *
  *    Handle Project, an application for managing projects and employees.   *
- *    Copyright (C) 2011  Marcus Pedersén marcux@handleproject.org          *
+ *    Copyright (C) 2011,2012  Marcus Pedersén marcux@handleproject.org     *
  *                                                                          *
  *    This program is free software: you can redistribute it and/or modify  *
  *    it under the terms of the GNU General Public License as published by  *
@@ -27,11 +27,30 @@
 
 //testing
 //#include "xmlstr.h"
-//#include <iostream>
+#include "staff/staff.h"
+#include <iostream>
 
 using namespace std;
 
 int main (int argc, char *argv[])
 {
 	initdb();
+
+	Staff s("Marcus", "Pedersén", "Serviceingenjör", 40.0);
+	cout << s.get_name() << " " << s.get_surname() << s.get_profession() << endl;
+	cout << s.get_week_working_hours() << "" << s.get_day_working_hours();
+	cout << " " << s.get_working_days_per_week() << endl;
+	
+	s.set_working_days_per_week(7.0);
+	cout << s.get_name() << " " << s.get_surname() << s.get_profession() << endl;
+	cout << s.get_week_working_hours() << "" << s.get_day_working_hours();
+	cout << " " << s.get_working_days_per_week() << endl;
+
+	cout << s.get_obj_xml_str();
+
+	s.set_week_working_hours(7.0);
+	cout << s.get_name() << " " << s.get_surname() << s.get_profession() << endl;
+	cout << s.get_week_working_hours() << "" << s.get_day_working_hours();
+	cout << " " << s.get_working_days_per_week() << endl << endl;
+	
 }

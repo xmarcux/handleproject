@@ -1,7 +1,8 @@
+
 /****************************************************************************
  *                                                                          *
  *    Handle Project, an application for managing projects and employees.   *
- *    Copyright (C) 2011  Marcus Pedersén marcux@handleproject.org          *
+ *    Copyright (C) 2011, 2012  Marcus Pedersén marcux@handleproject.org    *
  *                                                                          *
  *    This program is free software: you can redistribute it and/or modify  *
  *    it under the terms of the GNU General Public License as published by  *
