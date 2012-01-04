@@ -36,6 +36,7 @@ Staff::Staff(std::string name, std::string surname, std::string profession,
   }
   day_working_hours = 8.0;
   working_days_per_week = 5.0;
+  time(&id);
 }
 
 Staff::Staff(std::string name, std::string surname, std::string profession,
@@ -68,6 +69,7 @@ Staff::Staff(std::string name, std::string surname, std::string profession,
   {
     week_working_hours = 40.0;
   }
+  time(&id);
 }
 
 
@@ -77,6 +79,7 @@ Staff::Staff(std::string name, std::string surname, std::string profession)
   week_working_hours = 40.0;
   day_working_hours = 8.0;
   working_days_per_week = 5.0;
+  time(&id);
 }
 
 Staff::Staff(std::string name, std::string surname)
@@ -86,16 +89,149 @@ Staff::Staff(std::string name, std::string surname)
   day_working_hours = 8.0;
   working_days_per_week = 5.0;
   profession = "";
+  time(&id);
 }
 
-Staff::Staff(std::string name)
-  : name(name)
+Staff::Staff(std::string xmlstring)
 {
-  week_working_hours = 40.0;
-  day_working_hours = 8.0;
-  working_days_per_week = 5.0;
-  profession = "";
-  surname = "";
+  std::string search1("<staff>");
+  std::string search2("</staff>");
+  size_t found1, found2;
+  found1 = xmlstring.find(search1);
+  found2 = xmlstring.find(search2);
+  if(found1 != std::string::npos && found2 != std::string::npos)
+  {
+    search1.clear();
+    search2.clear();
+    found1 = std::string::npos;
+    found2 = std::string::npos;
+    found1 = xmlstring.find("<id>");
+    found2 = xmlstring.find("</id>");
+    if(found1 != std::string::npos && found2 != std::string::npos)
+    {
+      std::string idstr  = xmlstring.substr(found1 + 4, found2 - found1 - 4);
+      std::stringstream ss;
+      ss << idstr;
+      ss >> id;
+      if(ss.fail())
+      {
+	time(&id);
+      }
+    }
+    else
+      time(&id);
+  
+    search1.clear();
+    search2.clear();
+    found1 = std::string::npos;
+    found2 = std::string::npos;
+    found1 = xmlstring.find("<name>");
+    found2 = xmlstring.find("</name>");
+    if(found1 != std::string::npos && found2 != std::string::npos)
+    {
+      name = xmlstring.substr(found1 + 6, found2 - found1 - 6);
+    }
+    else
+      name = "";
+
+    search1.clear();
+    search2.clear();
+    found1 = std::string::npos;
+    found2 = std::string::npos;
+    found1 = xmlstring.find("<surname>");
+    found2 = xmlstring.find("</surname>");
+    if(found1 != std::string::npos && found2 != std::string::npos)
+    {
+      surname = xmlstring.substr(found1 + 9, found2 - found1 - 9);
+    }
+    else
+      surname = "";
+
+    search1.clear();
+    search2.clear();
+    found1 = std::string::npos;
+    found2 = std::string::npos;
+    found1 = xmlstring.find("<profession>");
+    found2 = xmlstring.find("</profession>");
+    if(found1 != std::string::npos && found2 != std::string::npos)
+    {
+      profession = xmlstring.substr(found1 + 12, found2 - found1 - 12);
+    }
+    else
+      profession = "";
+
+    search1.clear();
+    search2.clear();
+    found1 = std::string::npos;
+    found2 = std::string::npos;
+    found1 = xmlstring.find("<week_hours>");
+    found2 = xmlstring.find("</week_hours>");
+    if(found1 != std::string::npos && found2 != std::string::npos)
+    {
+      std::stringstream ss;
+      ss << xmlstring.substr(found1 + 12, found2 - found1 - 12);
+      ss >> week_working_hours;
+      if(ss.fail())
+      {
+	week_working_hours = 40.0;
+      }
+    }
+    else
+      week_working_hours = 40.0;
+
+    search1.clear();
+    search2.clear();
+    found1 = std::string::npos;
+    found2 = std::string::npos;
+    found1 = xmlstring.find("<day_hours>");
+    found2 = xmlstring.find("</day_hours>");
+    if(found1 != std::string::npos && found2 != std::string::npos)
+    {
+      std::stringstream ss;
+      ss << xmlstring.substr(found1 + 11, found2 - found1 - 11);
+      ss >> day_working_hours;
+      if(ss.fail())
+      {
+	day_working_hours = 8.0;
+      }
+    }
+    else
+      day_working_hours = 8.0;
+
+    search1.clear();
+    search2.clear();
+    found1 = std::string::npos;
+    found2 = std::string::npos;
+    found1 = xmlstring.find("<days_per_week>");
+    found2 = xmlstring.find("</days_per_week>");
+    if(found1 != std::string::npos && found2 != std::string::npos)
+    {
+      std::stringstream ss;
+      ss << xmlstring.substr(found1 + 15, found2 - found1 - 15);
+      ss >> working_days_per_week;
+      if(ss.fail())
+      {
+	working_days_per_week = 5.0;
+      }
+    }
+    else
+      working_days_per_week = 5.0;
+  }
+  else
+  {
+    time(&id);
+    name = "";
+    surname = "";
+    profession = "";
+    week_working_hours = 40.0;
+    day_working_hours = 8.0;
+    working_days_per_week = 5.0;
+  }
+}
+
+time_t Staff::get_id() const
+{
+  return id;
 }
 
 std::string Staff::get_name() const
@@ -126,6 +262,11 @@ double Staff::get_day_working_hours() const
 double Staff::get_working_days_per_week() const
 {
   return working_days_per_week;
+}
+
+void Staff::set_id(time_t t)
+{
+  id = t;
 }
 
 void Staff::set_name(std::string n)
@@ -185,18 +326,20 @@ void Staff::set_working_days_per_week(double days)
 std::string Staff::get_obj_xml_str() const
 {
   std::string xmlstr = get_xml_head();
-  std::ostringstream sstream, sstream2, sstream3;
+  std::ostringstream sstream, sstream2, sstream3, sstream4;
   xmlstr += get_DTD_str();
   xmlstr += get_first_level_open_tag("staff");
   xmlstr += get_second_level_object("name",name);
   xmlstr += get_second_level_object("surname",surname);
   xmlstr += get_second_level_object("profession",profession);
-  sstream << week_working_hours;
-  xmlstr += get_second_level_object("week_hours",sstream.str());
-  sstream2 << day_working_hours;
-  xmlstr += get_second_level_object("day_hours",sstream2.str());
-  sstream3 << working_days_per_week;
-  xmlstr += get_second_level_object("days_per_week",sstream3.str());
+  sstream << id;
+  xmlstr += get_second_level_object("id",sstream.str());
+  sstream2 << week_working_hours;
+  xmlstr += get_second_level_object("week_hours",sstream2.str());
+  sstream3 << day_working_hours;
+  xmlstr += get_second_level_object("day_hours",sstream3.str());
+  sstream4 << working_days_per_week;
+  xmlstr += get_second_level_object("days_per_week",sstream4.str());
   xmlstr += get_first_level_close_tag("staff");
   return xmlstr;
 }

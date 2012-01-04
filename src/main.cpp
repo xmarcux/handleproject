@@ -27,6 +27,8 @@
 
 //testing
 //#include "xmlstr.h"
+#include <string>
+
 #include "staff/staff.h"
 #include <iostream>
 
@@ -52,5 +54,31 @@ int main (int argc, char *argv[])
 	cout << s.get_name() << " " << s.get_surname() << s.get_profession() << endl;
 	cout << s.get_week_working_hours() << "" << s.get_day_working_hours();
 	cout << " " << s.get_working_days_per_week() << endl << endl;
+
+	string xmlstr = "<?xml version=\"1.0\" ?>\
+<!DOCTYPE staff [\
+	<!ELEMENT staff(name, surname, profession, week_hours, day_hours, days_per_week)>\
+	<!ELEMENT name		(#CDATA)>\
+	<!ELEMENT surname	(#CDATA)>\
+	<!ELEMENT profession	(#CDATA)>\
+	<!ELEMENT week_hours	(#CDATA)>\
+	<!ELEMENT day_hours	(#CDATA)>\
+	<!ELEMENT days_per_week	(#CDATA)>\
+]>\
+<staff>\
+	<name>Putte</name>\
+	<surname>Karlsson</surname>\
+	<profession>Rörmockare</profession>\
+	<id>1234567890</id>\
+	<week_hours>100</week_hours>\
+	<day_hours>20</day_hours>\
+	<days_per_week>5</days_per_week>\
+</staff>";
+
+	Staff p(xmlstr);
+
+	cout << p.get_name() << " " << p.get_surname() << " " <<  p.get_profession() << endl;
+	cout << p.get_week_working_hours() << " " << p.get_day_working_hours();
+	cout << " " << p.get_working_days_per_week() << endl << p.get_id() << endl;
 	
 }

@@ -23,6 +23,7 @@
 
 #include "../saveobj.h"
 #include <string>
+#include <ctime>
 
 /* Staff class represent an employee
  * with properties like name, surname annd profession.
@@ -54,11 +55,19 @@ class Staff : public Saveobj
 	double day_hours, double days_per_week);
   Staff(std::string name, std::string surname, std::string profession);
   Staff(std::string name, std::string surname);
-  Staff(std::string name);
+
+  /* Creates an instance of Staff
+   * with properies from xml string.
+   * If assumed tags are missing
+   * variables will be initiated
+   * to default values.
+   */
+  Staff(std::string xmlstring);
   
   /* Methods to get information
    * out of object.
    */
+  time_t get_id() const;
   std::string get_name() const;
   std::string get_surname() const;
   std::string get_profession() const;
@@ -67,6 +76,7 @@ class Staff : public Saveobj
   double get_working_days_per_week() const;
 
   /* Set values in object */
+  void set_id(time_t t);
   void set_name(std::string n);
   void set_surname(std::string sname);
   void set_profession(std::string prof);
@@ -96,6 +106,7 @@ class Staff : public Saveobj
   std::string get_obj_xml_str() const;
 
  private:
+  time_t id;
   std::string name;
   std::string surname;
   std::string profession;
