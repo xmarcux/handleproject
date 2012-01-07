@@ -31,6 +31,7 @@
 
 #include "staff/staff.h"
 #include <iostream>
+#include <list>
 
 using namespace std;
 
@@ -80,5 +81,17 @@ int main (int argc, char *argv[])
 	cout << p.get_name() << " " << p.get_surname() << " " <<  p.get_profession() << endl;
 	cout << p.get_week_working_hours() << " " << p.get_day_working_hours();
 	cout << " " << p.get_working_days_per_week() << endl << p.get_id() << endl;
+
+	/*	if(save_object_to_db(&s) < 0)
+	  cout << "can not write s object to file" << endl;
+	if(save_object_to_db(&p) < 0)
+	  cout << "can not write p object to file" << endl;
+	*/
 	
+	list<Staff> ls = get_staff_from_db();
+	list<Staff>::iterator it = ls.begin();
+	for(;it != ls.end(); it++)
+	{
+	  cout << it->get_obj_xml_str() << endl;
+	}
 }

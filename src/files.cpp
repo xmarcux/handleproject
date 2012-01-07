@@ -20,11 +20,17 @@
  ****************************************************************************/
 
 #include "files.h"
+#include "staff/staff.h"
 
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <dirent.h>
 #include <fstream>
 #include <ctime>
+#include <cstring>
+#include <typeinfo>
+#include <string>
+#include <sstream>
 
 using namespace std;
 
@@ -92,4 +98,63 @@ void new_error(string err_text, string in_file, string in_function)
   errstream.open(errfile, fstream::out | fstream::app);
   errstream << err_msg << endl << endl;
   errstream.close();
+}
+
+
+int save_object_to_db(Saveobj *obj)
+{
+  string filepath;
+  fstream filestream;
+  if(typeid(*obj) == typeid(Staff))
+  {
+    stringstream ss;
+    ss << obj->get_id();
+    filepath = staffpath;
+    filepath += "/" + ss.str() + ".staff";
+    filestream.open(filepath.c_str(), fstream::out);
+    filestream << obj->get_obj_xml_str();
+  }
+  filestream.flush();
+  filestream.close();
+  if(filestream.fail())
+  {
+    return -1;
+  }
+  return 1;
+}
+
+list<Staff> get_staff_from_db()
+{
+  list<Staff> staffl;
+  fstream filestream;
+  DIR *dp;
+  struct dirent *dirp;
+
+  if((dp = opendir(staffpath)) == NULL)
+  {
+    new_error("Could not open dir:" + string(staffpath), "files.cpp", 
+	      "list<Staff> get_staff_from_db()");
+  }
+  else
+  {
+    while((dirp = readdir(dp)) != NULL)
+    {
+      if(strcmp(".", dirp->d_name) != 0 && strcmp("..", dirp->d_name) != 0)
+      {
+        int length;
+        char *buffer;
+        string filepath = string(staffpath) + "/" + string(dirp->d_name);
+        filestream.open(filepath.c_str(), fstream::in);
+        filestream.seekg(0, ios::end);
+        length = filestream.tellg();
+        filestream.seekg(0, ios::beg);
+        buffer = new char[length];
+        filestream.read(buffer, length);
+        filestream.close();
+        staffl.push_back(Staff(string(buffer)));
+      }
+    }
+    closedir(dp);
+  }
+  return staffl;
 }

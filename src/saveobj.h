@@ -39,6 +39,13 @@ class Saveobj
    */
   virtual std::string get_obj_xml_str() const  = 0;
 
+  /* Subclasses should have an id.
+   * It is prefered that is is the
+   * time when the object was created,
+   * then the id will be unique.
+   */
+  virtual time_t get_id() const = 0;
+
  private:
   /* All classes should create a 
    * unique DTD string to be used 

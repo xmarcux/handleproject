@@ -6,7 +6,7 @@ LFLAGS = -Wall
 handleproject : $(OBJS)
 	$(CC) $(LFLAGS) $(OBJS) -o handleproject
 
-files.o : files.h files.cpp
+files.o : staff/staff.h saveobj.h files.h files.cpp
 	$(CC) $(CFLAGS) files.cpp
 
 main.o : staff/staff.h xmlstr.h files.h main.cpp

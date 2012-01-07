@@ -21,7 +21,10 @@
 #ifndef FILES_H
 #define FILES_H
 
+#include "staff/staff.h"
+#include "saveobj.h"
 #include <string>
+#include <list>
 
 /* Functon initializes database if it does not
  * already exists. 
@@ -38,5 +41,19 @@ void initdb();
  */
 void new_error(std::string err_text, std::string in_file, std::string in_function);
 
+/* Function saves object as an xml-file to database.
+ * All objects subclassing Saveobj will be able to be saved
+ * to file, by using method get_obj_xml_str().
+ * Returns a positive value on success and a negative value
+ * on falure.
+ */
+int save_object_to_db(Saveobj *obj);
+
+/* Function gets all staff objects saved 
+ * to databse.
+ * A list containing all staff obejcts in database
+ * is returned.
+ */
+std::list<Staff> get_staff_from_db();
 #endif
 
