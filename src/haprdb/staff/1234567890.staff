@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE staff [
+	<!ELEMENT staff (id, name, surname, profession, week_hours, day_hours, days_per_week)>
+	<!ELEMENT id		(#PCDATA)>
+	<!ELEMENT name		(#PCDATA)>
+	<!ELEMENT surname	(#PCDATA)>
+	<!ELEMENT profession	(#PCDATA)>
+	<!ELEMENT week_hours	(#PCDATA)>
+	<!ELEMENT day_hours	(#PCDATA)>
+	<!ELEMENT days_per_week	(#PCDATA)>
+]>
+<staff>
+	<id>1234567890</id>
+	<name>Putte</name>
+	<surname>Karlsson</surname>
+	<profession>Rörmockare</profession>
+	<week_hours>100</week_hours>
+	<day_hours>20</day_hours>
+	<days_per_week>5</days_per_week>
+</staff>

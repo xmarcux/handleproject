@@ -22,7 +22,7 @@
 
 std::string get_xml_head()
 {
-  return "<?xml version=\"1.0\" ?>\n";
+  return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 }
 
 std::string get_first_level_open_tag(std::string head)

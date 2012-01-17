@@ -30,6 +30,7 @@
 #include <string>
 
 #include "staff/staff.h"
+#include "staff/job.h"
 #include <iostream>
 #include <list>
 
@@ -39,6 +40,47 @@ int main (int argc, char *argv[])
 {
 	initdb();
 
+	//testing
+	//	Job j(1234, "My first job", 4321, 1912, 3, 4, 2012, 4, 5, 8);
+	Job j(1234, "My first job");
+	cout << "Startyear: " << j.get_start_year() << endl;
+	cout << "Startmonth: " << j.get_start_month() << endl;
+	cout << "Startday: " << j.get_start_day() << endl;
+	cout << "Endyear: " << j.get_end_year() << endl;
+	cout << "Endmonth: " << j.get_end_month() << endl;
+	cout << "Endday: " << j.get_end_day() << endl;
+	cout << "Hours per day: " << j.get_hours_per_day() << endl;
+	cout << "Staffid: " << j.get_staff_id() << endl;
+	cout << "Projectid: " << j.get_project_id() << endl;
+	cout << "Desc: " << j.get_description() << endl;
+	cout << "Startdtate str eu: " << j.get_start_date_str_eu() << endl;
+	cout << "Enddate str eu: " << j.get_end_date_str_eu() << endl;
+	cout << "Startdtate str us: " << j.get_start_date_str_us() << endl;
+	cout << "Enddate str us: " << j.get_end_date_str_us() << endl << endl;
+	cout << "Start_year: " << j.get_start_year() << endl;
+	j.set_start_date("2012-01-04");
+	j.set_end_date("2012-02-16");
+
+	cout << j.get_obj_xml_str() << endl;
+	cout << "working days: " << j.total_working_hours(5) << endl << endl;
+	//	string s1 = j.get_obj_xlm_str();
+	Job j2(j.get_obj_xml_str());
+	cout << "j2" << endl << j2.get_obj_xml_str() << endl << endl;
+	j.set_finished(true);
+	//	string s2 = j.get_obj_xlm_str();
+	Job j3(j.get_obj_xml_str());
+	cout << "j3" << endl << j3.get_obj_xml_str() << endl << endl;
+	/* 	cout << "Startdtate str eu: " << j.get_start_date_str_eu() << endl;
+ 	cout << "Enddate str eu: " << j.get_end_date_str_eu() << endl;
+	j.set_start_date("1919-01-32");*/
+	//	j.set_end_date("1/2/11");
+	// 	cout << "Startdtate str eu: " << j.get_start_date_str_eu() << endl;
+	// 	cout << "Enddate str eu: " << j.get_end_date_str_eu() << endl;
+	/*	j.set_start_date("12-02-29");
+	j.set_end_date("6/30/1800");
+ 	cout << "Startdtate str eu: " << j.get_start_date_str_eu() << endl;
+ 	cout << "Enddate str eu: " << j.get_end_date_str_eu() << endl;
+	/*
 	Staff s("Marcus", "Pedersén", "Serviceingenjör", 40.0);
 	cout << s.get_name() << " " << s.get_surname() << s.get_profession() << endl;
 	cout << s.get_week_working_hours() << "" << s.get_day_working_hours();
@@ -81,17 +123,18 @@ int main (int argc, char *argv[])
 	cout << p.get_name() << " " << p.get_surname() << " " <<  p.get_profession() << endl;
 	cout << p.get_week_working_hours() << " " << p.get_day_working_hours();
 	cout << " " << p.get_working_days_per_week() << endl << p.get_id() << endl;
-
-	/*	if(save_object_to_db(&s) < 0)
+	/*
+	if(save_object_to_db(&s) < 0)
 	  cout << "can not write s object to file" << endl;
 	if(save_object_to_db(&p) < 0)
 	  cout << "can not write p object to file" << endl;
 	*/
-	
+	/*
 	list<Staff> ls = get_staff_from_db();
 	list<Staff>::iterator it = ls.begin();
 	for(;it != ls.end(); it++)
 	{
 	  cout << it->get_obj_xml_str() << endl;
 	}
+	*/
 }

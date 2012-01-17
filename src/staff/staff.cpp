@@ -329,11 +329,11 @@ std::string Staff::get_obj_xml_str() const
   std::ostringstream sstream, sstream2, sstream3, sstream4;
   xmlstr += get_DTD_str();
   xmlstr += get_first_level_open_tag("staff");
+  sstream << id;
+  xmlstr += get_second_level_object("id",sstream.str());
   xmlstr += get_second_level_object("name",name);
   xmlstr += get_second_level_object("surname",surname);
   xmlstr += get_second_level_object("profession",profession);
-  sstream << id;
-  xmlstr += get_second_level_object("id",sstream.str());
   sstream2 << week_working_hours;
   xmlstr += get_second_level_object("week_hours",sstream2.str());
   sstream3 << day_working_hours;
@@ -347,13 +347,14 @@ std::string Staff::get_obj_xml_str() const
 std::string Staff::get_DTD_str() const
 {
   std::string dtdstr = "<!DOCTYPE staff [";
-  dtdstr += "\n\t<!ELEMENT staff(name, surname, profession, week_hours, day_hours, days_per_week)>";
-  dtdstr += "\n\t<!ELEMENT name\t\t(#CDATA)>";
-  dtdstr += "\n\t<!ELEMENT surname\t(#CDATA)>";
-  dtdstr += "\n\t<!ELEMENT profession\t(#CDATA)>";
-  dtdstr += "\n\t<!ELEMENT week_hours\t(#CDATA)>";
-  dtdstr += "\n\t<!ELEMENT day_hours\t(#CDATA)>";
-  dtdstr += "\n\t<!ELEMENT days_per_week\t(#CDATA)>";
+  dtdstr += "\n\t<!ELEMENT staff (id, name, surname, profession, week_hours, day_hours, days_per_week)>";
+  dtdstr += "\n\t<!ELEMENT id\t\t(#PCDATA)>";
+  dtdstr += "\n\t<!ELEMENT name\t\t(#PCDATA)>";
+  dtdstr += "\n\t<!ELEMENT surname\t(#PCDATA)>";
+  dtdstr += "\n\t<!ELEMENT profession\t(#PCDATA)>";
+  dtdstr += "\n\t<!ELEMENT week_hours\t(#PCDATA)>";
+  dtdstr += "\n\t<!ELEMENT day_hours\t(#PCDATA)>";
+  dtdstr += "\n\t<!ELEMENT days_per_week\t(#PCDATA)>";
   dtdstr += "\n]>\n";
   return dtdstr;
 }
