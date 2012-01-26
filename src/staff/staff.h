@@ -51,8 +51,9 @@ class Staff : public Saveobj
    * is greater then zero week_working_hours
    * will be calculated.
    */
-  Staff(std::string name, std::string surname, std::string profession,
-	double day_hours, double days_per_week);
+  Staff(std::string name, std::string surname, std::string initials,
+	std::string profession, double day_hours, double days_per_week);
+  Staff(std::string name, std::string surname, std::string initials, std::string profession);
   Staff(std::string name, std::string surname, std::string profession);
   Staff(std::string name, std::string surname);
 
@@ -70,6 +71,7 @@ class Staff : public Saveobj
   time_t get_id() const;
   std::string get_name() const;
   std::string get_surname() const;
+  std::string get_initials() const;
   std::string get_profession() const;
   double get_week_working_hours() const;
   double get_day_working_hours() const;
@@ -79,6 +81,7 @@ class Staff : public Saveobj
   void set_id(time_t t);
   void set_name(std::string n);
   void set_surname(std::string sname);
+  void set_initials(std::string ini);
   void set_profession(std::string prof);
 
   /* hours must be a positiv value.
@@ -109,6 +112,7 @@ class Staff : public Saveobj
   time_t id;
   std::string name;
   std::string surname;
+  std::string initials;
   std::string profession;
   double week_working_hours;
   double day_working_hours;

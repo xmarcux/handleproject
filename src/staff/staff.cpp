@@ -37,11 +37,22 @@ Staff::Staff(std::string name, std::string surname, std::string profession,
   day_working_hours = 8.0;
   working_days_per_week = 5.0;
   time(&id);
+  
+  std::string in = "";
+  if(name.size() >=1)
+  {
+    in = name.substr(0, 1);
+  }
+  if(surname.size() >= 1)
+  {
+    in += surname.substr(0, 1);
+  }
+  initials = in;
 }
 
-Staff::Staff(std::string name, std::string surname, std::string profession,
-	     double day_hours, double days_per_week)
-  : name(name), surname(surname), profession(profession)
+Staff::Staff(std::string name, std::string surname, std::string initials,
+	     std::string profession, double day_hours, double days_per_week)
+  : name(name), surname(surname), initials(initials), profession(profession)
 {
   if(day_hours > -1)
   {
@@ -72,6 +83,14 @@ Staff::Staff(std::string name, std::string surname, std::string profession,
   time(&id);
 }
 
+Staff::Staff(std::string name, std::string surname, std::string initials, std::string profession)
+  : name(name), surname(surname), initials(initials), profession(profession)
+{
+  week_working_hours = 40.0;
+  day_working_hours = 8.0;
+  working_days_per_week = 5.0;
+  time(&id);
+}
 
 Staff::Staff(std::string name, std::string surname, std::string profession)
   : name(name), surname(surname), profession(profession)
@@ -80,6 +99,17 @@ Staff::Staff(std::string name, std::string surname, std::string profession)
   day_working_hours = 8.0;
   working_days_per_week = 5.0;
   time(&id);
+
+  std::string in = "";
+  if(name.size() >=1)
+  {
+    in = name.substr(0, 1);
+  }
+  if(surname.size() >= 1)
+  {
+    in += surname.substr(0, 1);
+  }
+  initials = in;
 }
 
 Staff::Staff(std::string name, std::string surname)
@@ -90,6 +120,17 @@ Staff::Staff(std::string name, std::string surname)
   working_days_per_week = 5.0;
   profession = "";
   time(&id);
+
+  std::string in = "";
+  if(name.size() >=1)
+  {
+    in = name.substr(0, 1);
+  }
+  if(surname.size() >= 1)
+  {
+    in += surname.substr(0, 1);
+  }
+  initials = in;
 }
 
 Staff::Staff(std::string xmlstring)
@@ -146,6 +187,29 @@ Staff::Staff(std::string xmlstring)
     }
     else
       surname = "";
+
+    search1.clear();
+    search2.clear();
+    found1 = std::string::npos;
+    found2 = std::string::npos;
+    found1 = xmlstring.find("<initials>");
+    found2 = xmlstring.find("</initials>");
+    if(found1 != std::string::npos && found2 != std::string::npos)
+    {
+      initials = xmlstring.substr(found1 + 10, found2 - found1 - 10);
+    }
+    else
+    {
+      initials = "";
+      if(name.size() >= 1)
+      {
+	initials = name.substr(0, 1);
+      }
+      if(surname.size() >= 1)
+      {
+	initials += surname.substr(0, 1);
+      }
+    } 
 
     search1.clear();
     search2.clear();
@@ -244,6 +308,11 @@ std::string Staff::get_surname() const
   return surname;
 }
 
+std::string Staff::get_initials() const
+{
+  return initials;
+}
+
 std::string Staff::get_profession() const
 {
   return profession;
@@ -277,6 +346,11 @@ void Staff::set_name(std::string n)
 void Staff::set_surname(std::string sname)
 {
   surname = sname;
+}
+
+void Staff::set_initials(std::string ini)
+{
+  initials = ini;
 }
 
 void Staff::set_profession(std::string prof)
@@ -333,6 +407,7 @@ std::string Staff::get_obj_xml_str() const
   xmlstr += get_second_level_object("id",sstream.str());
   xmlstr += get_second_level_object("name",name);
   xmlstr += get_second_level_object("surname",surname);
+  xmlstr += get_second_level_object("initials",initials);
   xmlstr += get_second_level_object("profession",profession);
   sstream2 << week_working_hours;
   xmlstr += get_second_level_object("week_hours",sstream2.str());
@@ -347,10 +422,11 @@ std::string Staff::get_obj_xml_str() const
 std::string Staff::get_DTD_str() const
 {
   std::string dtdstr = "<!DOCTYPE staff [";
-  dtdstr += "\n\t<!ELEMENT staff (id, name, surname, profession, week_hours, day_hours, days_per_week)>";
+  dtdstr += "\n\t<!ELEMENT staff (id, name, surname, initials, profession, week_hours, day_hours, days_per_week)>";
   dtdstr += "\n\t<!ELEMENT id\t\t(#PCDATA)>";
   dtdstr += "\n\t<!ELEMENT name\t\t(#PCDATA)>";
   dtdstr += "\n\t<!ELEMENT surname\t(#PCDATA)>";
+  dtdstr += "\n\t<!ELEMENT initials\t(#PCDATA)>";
   dtdstr += "\n\t<!ELEMENT profession\t(#PCDATA)>";
   dtdstr += "\n\t<!ELEMENT week_hours\t(#PCDATA)>";
   dtdstr += "\n\t<!ELEMENT day_hours\t(#PCDATA)>";

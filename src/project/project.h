@@ -87,6 +87,8 @@ class Project : public Saveobj, public Date
   std::string get_project_leader_initials() const;
   int get_working_days_per_week() const;
   int get_working_hours_per_day() const;
+  int get_total_working_days() const;
+  int get_total_working_hours() const;
 
   /* Inhereted method from Saveobj. */
   std::string get_obj_xml_str() const;
