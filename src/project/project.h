@@ -23,6 +23,7 @@
 
 #include "../saveobj.h"
 #include "../date.h"
+#include "../staff/staff.h"
 #include <string>
 
 /* Project class contains the main
@@ -39,7 +40,6 @@ class Project : public Saveobj, public Date
    * Default project id is time now in seconds
    * from the epoq.
    * Defalut values for strings it the empty string.
-   * Default values for start and end date is today.
    */
   Project(time_t project_id, std::string project_no, std::string project_name,
 	  std::string description, std::string project_leader_name, 
@@ -47,9 +47,19 @@ class Project : public Saveobj, public Date
 	  int start_year, int start_month, int start_day,
 	  int end_year, int end_month, int end_day);
 
+  Project(time_t project_id, std::string project_no, std::string project_name,
+	  std::string description, Staff project_leader, 
+	  int start_year, int start_month, int start_day,
+	  int end_year, int end_month, int end_day);
+
   Project(std::string project_no, std::string project_name,
 	  std::string description, std::string project_leader_name, 
 	  std::string project_leader_surname, std::string project_leader_initials, 
+	  int start_year, int start_month, int start_day,
+	  int end_year, int end_month, int end_day);
+
+  Project(std::string project_no, std::string project_name,
+	  std::string description, Staff project_leader,
 	  int start_year, int start_month, int start_day,
 	  int end_year, int end_month, int end_day);
 
@@ -58,9 +68,17 @@ class Project : public Saveobj, public Date
 	  std::string project_leader_surname, std::string project_leader_initials, 
 	  std::string start_date, std::string end_date);
 
+  Project(time_t project_id, std::string project_no, std::string project_name,
+	  std::string description, Staff project_leader,
+	  std::string start_date, std::string end_date);
+
   Project(std::string project_no, std::string project_name,
 	  std::string description, std::string project_leader_name, 
 	  std::string project_leader_surname, std::string project_leader_initials, 
+	  std::string end_date);
+
+  Project(std::string project_no, std::string project_name,
+	  std::string description, Staff project_leader,
 	  std::string end_date);
 
   Project(std::string project_no, std::string project_name, std::string description,
@@ -70,11 +88,21 @@ class Project : public Saveobj, public Date
   Project(std::string project_no, std::string project_name, std::string description,
 	  std::string start_date, std::string end_date);
 
+  Project(std::string project_no, std::string project_name, std::string description,
+	  Staff project_leader, std::string start_date, std::string end_date);
+
+  Project(std::string project_no, std::string project_name, std::string description,
+	  Staff project_leader, int working_days_per_week, int working_hours_per_day,
+	  std::string start_date, std::string end_date);
+
   Project(std::string project_no, std::string project_name,
 	  std::string description, std::string project_leader_name, 
 	  std::string project_leader_surname, std::string project_leader_initials);
 
-  Project(std::string project_no, std::string project_name,::string description);
+  Project(std::string project_no, std::string project_name,
+	  std::string description, Staff project_leader);
+
+  Project(std::string project_no, std::string project_name, std::string description);
 
   /* Methods to get values
    * from object.
@@ -82,13 +110,28 @@ class Project : public Saveobj, public Date
   std::string get_project_no() const;
   std::string get_project_name() const;
   std::string get_description() const;
-  std::string get_project_leader_name() conat;
+  Staff get_project_leader() const;
+  std::string get_project_leader_name() const;
   std::string get_project_leader_surname() const;
   std::string get_project_leader_initials() const;
   int get_working_days_per_week() const;
   int get_working_hours_per_day() const;
   int get_total_working_days() const;
   int get_total_working_hours() const;
+
+  /* Methods to change properties
+   * of the object.
+   */
+  void set_project_id(time_t proj);
+  void set_project_no(std::string no);
+  void set_project_name(std::string name);
+  void set_description(std::string desc);
+  void set_project_leader(Staff leader);
+  void set_project_leader_name(std::string name);
+  void set_project_leader_surname(std::string surname);
+  void set_project_leader_initials(std::string init);
+  void set_working_days_per_week(int days);
+  void set_working_hours_per_day(int hours);
 
   /* Inhereted method from Saveobj. */
   std::string get_obj_xml_str() const;
@@ -101,9 +144,7 @@ class Project : public Saveobj, public Date
   std::string project_no;
   std::string project_name;
   std::string description;
-  std::string project_leader_name;
-  std::string project_leader_surname;
-  std::string project_leader_initials;
+  Staff project_leader;
   int working_days_per_week;
   int working_hours_per_day;
 

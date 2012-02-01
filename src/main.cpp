@@ -33,6 +33,7 @@
 #include "staff/job.h"
 #include <iostream>
 #include <list>
+#include <ctime>
 
 using namespace std;
 
@@ -137,4 +138,25 @@ int main (int argc, char *argv[])
 	  cout << it->get_obj_xml_str() << endl;
 	}
 	*/
+
+	//Testing time
+	struct tm t;
+	t.tm_year = 2012 -1900;
+	t.tm_mon = 6 -1;
+	t.tm_mday = 17;
+	t.tm_hour = 1;
+	t.tm_min = 0;
+	time_t tt = mktime(&t);
+	cout << "Veckodag innan: " << t.tm_wday << endl;
+	if(t.tm_wday == 0)
+	  t.tm_mday = t.tm_mday - 6;
+	else
+	  t.tm_mday = 1 + t.tm_mday - t.tm_wday;
+	mktime(&t);
+	cout << "mon: " << t.tm_mon << endl;
+	cout << "Mday: " << t.tm_mday << endl;
+	cout << "Veckodag innan: " << t.tm_wday << endl;
+	struct tm *ttm;
+	ttm = localtime(&tt);
+	cout << "Veckodag: " << ttm->tm_wday << endl;
 }

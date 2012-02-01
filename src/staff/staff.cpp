@@ -135,15 +135,11 @@ Staff::Staff(std::string name, std::string surname)
 
 Staff::Staff(std::string xmlstring)
 {
-  std::string search1("<staff>");
-  std::string search2("</staff>");
   size_t found1, found2;
-  found1 = xmlstring.find(search1);
-  found2 = xmlstring.find(search2);
+  found1 = xmlstring.find("<staff>");
+  found2 = xmlstring.find("</staff>");
   if(found1 != std::string::npos && found2 != std::string::npos)
   {
-    search1.clear();
-    search2.clear();
     found1 = std::string::npos;
     found2 = std::string::npos;
     found1 = xmlstring.find("<id>");
@@ -162,8 +158,6 @@ Staff::Staff(std::string xmlstring)
     else
       time(&id);
   
-    search1.clear();
-    search2.clear();
     found1 = std::string::npos;
     found2 = std::string::npos;
     found1 = xmlstring.find("<name>");
@@ -175,8 +169,6 @@ Staff::Staff(std::string xmlstring)
     else
       name = "";
 
-    search1.clear();
-    search2.clear();
     found1 = std::string::npos;
     found2 = std::string::npos;
     found1 = xmlstring.find("<surname>");
@@ -188,8 +180,6 @@ Staff::Staff(std::string xmlstring)
     else
       surname = "";
 
-    search1.clear();
-    search2.clear();
     found1 = std::string::npos;
     found2 = std::string::npos;
     found1 = xmlstring.find("<initials>");
@@ -211,8 +201,6 @@ Staff::Staff(std::string xmlstring)
       }
     } 
 
-    search1.clear();
-    search2.clear();
     found1 = std::string::npos;
     found2 = std::string::npos;
     found1 = xmlstring.find("<profession>");
@@ -224,8 +212,6 @@ Staff::Staff(std::string xmlstring)
     else
       profession = "";
 
-    search1.clear();
-    search2.clear();
     found1 = std::string::npos;
     found2 = std::string::npos;
     found1 = xmlstring.find("<week_hours>");
@@ -243,8 +229,6 @@ Staff::Staff(std::string xmlstring)
     else
       week_working_hours = 40.0;
 
-    search1.clear();
-    search2.clear();
     found1 = std::string::npos;
     found2 = std::string::npos;
     found1 = xmlstring.find("<day_hours>");
@@ -262,8 +246,6 @@ Staff::Staff(std::string xmlstring)
     else
       day_working_hours = 8.0;
 
-    search1.clear();
-    search2.clear();
     found1 = std::string::npos;
     found2 = std::string::npos;
     found1 = xmlstring.find("<days_per_week>");
