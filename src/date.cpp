@@ -145,7 +145,7 @@ std::string Date::get_end_date_str_us() const
 
 int Date::set_start_year(int year)
 {
-  if(year > 1900)
+  if(year < 1900)
     return -1;
 
   start_year = year;

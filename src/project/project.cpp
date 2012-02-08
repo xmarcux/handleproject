@@ -156,7 +156,6 @@ Project::Project(std::string project_no, std::string project_name, std::string d
   time_t t;
   time(&t);
   project_id = t;
-  //  project_leader = Staff("", "");
   working_days_per_week = 5;
   working_hours_per_day = 8;
 }
@@ -221,6 +220,182 @@ Project::Project(std::string project_no, std::string project_name, std::string d
   project_id = t;
   working_days_per_week = 5;
   working_hours_per_day = 8;
+}
+
+Project::Project(std::string xmlstring)
+  : Date(true, ""), project_leader(Staff("", ""))
+{
+  std::string str;
+  size_t find1, find2;
+  find1 = xmlstring.find("<staff>");
+  find2 = xmlstring.find("</staff>");
+  if(find1 != std::string::npos && find2 != std::string::npos)
+    project_leader = Staff(xmlstring.substr(find1, find2 + 8 - find1));
+  find1 = std::string::npos;
+  find2 = std::string::npos;
+  find1 = xmlstring.find("<id>");
+  find2 = xmlstring.find("</id>");
+  if(find1 != std::string::npos && find2 != std::string::npos)
+  {
+    std::stringstream ss;
+    ss << xmlstring.substr(find1 + 4, find2 - find1 - 4);
+    ss >> project_id;
+    if(ss.fail())
+      time(&project_id);
+  }
+  else
+    time(&project_id);
+
+  find1 = std::string::npos;
+  find2 = std::string::npos;
+  find1 = xmlstring.find("<name>");
+  find2 = xmlstring.find("</name>");
+  if(find1 != std::string::npos && find2 != std::string::npos)
+  {
+    project_name = xmlstring.substr(find1 + 6, find2 - find1 - 6);
+  }
+  else
+    project_name = "";
+
+  find1 = std::string::npos;
+  find2 = std::string::npos;
+  find1 = xmlstring.find("<description>");
+  find2 = xmlstring.find("</description>");
+  if(find1 != std::string::npos && find2 != std::string::npos)
+  {
+    description = xmlstring.substr(find1 + 13, find2 - find1 - 13);
+  }
+  else
+    description = "";
+
+  find1 = std::string::npos;
+  find2 = std::string::npos;
+  find1 = xmlstring.find("<staff>");
+  find2 = xmlstring.find("</staff>");
+  if(find1 != std::string::npos && find2 != std::string::npos)
+  {
+    project_leader = Staff(xmlstring.substr(find1, find2 - find1 + 8));
+  }
+  else
+    project_leader = Staff("", "");
+
+  find1 = std::string::npos;
+  find2 = std::string::npos;
+  find1 = xmlstring.find("<days_per_week>");
+  find2 = xmlstring.find("</days_per_week>");
+  if(find1 != std::string::npos && find2 != std::string::npos)
+  {
+    std::stringstream ss;
+    ss << xmlstring.substr(find1 + 15, find2 - find1 - 15);
+    ss >> working_days_per_week;
+    if(ss.fail())
+    {
+      working_days_per_week = 5;
+    }
+  }
+  else
+    working_days_per_week = 5;
+
+  find1 = std::string::npos;
+  find2 = std::string::npos;
+  find1 = xmlstring.find("<hours_per_day>");
+  find2 = xmlstring.find("</hours_per_day>");
+  if(find1 != std::string::npos && find2 != std::string::npos)
+  {
+    std::stringstream ss;
+    ss << xmlstring.substr(find1 + 15, find2 - find1 - 15);
+    ss >> working_hours_per_day;
+    if(ss.fail())
+    {
+      working_hours_per_day = 8;
+    }
+  }
+  else
+    working_hours_per_day = 8;
+  
+  find1 = std::string::npos;
+  find2 = std::string::npos;
+  find1 = xmlstring.find("<start_year>");
+  find2 = xmlstring.find("</start_year>");
+  if(find1 != std::string::npos && find2 != std::string::npos)
+  {
+    std::stringstream ss;
+    int year;
+    ss << xmlstring.substr(find1 + 12, find2 - find1 -12);
+    ss >> year;
+    if(!ss.fail())
+      set_start_year(year);
+  }
+
+  find1 = std::string::npos;
+  find2 = std::string::npos;
+  find1 = xmlstring.find("<start_month>");
+  find2 = xmlstring.find("</start_month>");
+  if(find1 != std::string::npos && find2 != std::string::npos)
+  {
+    std::stringstream ss;
+    int month;
+    ss << xmlstring.substr(find1 + 13, find2 - find1 - 13);
+    ss >> month;
+    if(!ss.fail())
+      set_start_month(month);
+  }
+
+  find1 = std::string::npos;
+  find2 = std::string::npos;
+  find1 = xmlstring.find("<start_day>");
+  find2 = xmlstring.find("</start_day>");
+  if(find1 != std::string::npos && find2 != std::string::npos)
+  {
+    std::stringstream ss;
+    int day;
+    ss << xmlstring.substr(find1 + 11, find2 - find1 - 11);
+    ss >> day;
+    if(!ss.fail())
+      set_start_day(day);
+  }
+
+  find1 = std::string::npos;
+  find2 = std::string::npos;
+  find1 = xmlstring.find("<end_year>");
+  find2 = xmlstring.find("</end_year>");
+  if(find1 != std::string::npos && find2 != std::string::npos)
+  {
+    std::stringstream ss;
+    int year;
+    ss << xmlstring.substr(find1 + 10, find2 - find1 -10);
+    ss >> year;
+    if(!ss.fail())
+      set_end_year(year);
+  }
+
+  find1 = std::string::npos;
+  find2 = std::string::npos;
+  find1 = xmlstring.find("<end_month>");
+  find2 = xmlstring.find("</end_month>");
+  if(find1 != std::string::npos && find2 != std::string::npos)
+  {
+    std::stringstream ss;
+    int month;
+    ss << xmlstring.substr(find1 + 11, find2 - find1 - 11);
+    ss >> month;
+    if(!ss.fail())
+      set_end_month(month);
+  }
+
+  find1 = std::string::npos;
+  find2 = std::string::npos;
+  find1 = xmlstring.find("<end_day>");
+  find2 = xmlstring.find("</end_day>");
+  if(find1 != std::string::npos && find2 != std::string::npos)
+  {
+    std::stringstream ss;
+    int day;
+    ss << xmlstring.substr(find1 + 9, find2 - find1 - 9);
+    ss >> day;
+    if(!ss.fail())
+      set_end_day(day);
+  }
 }
 
 std::string Project::get_project_no() const
@@ -376,19 +551,55 @@ void Project::set_working_hours_per_day(int hours)
 
 std::string Project::get_obj_xml_str() const
 {
-  std::stringstream ss, ss2, ss3;
+  std::stringstream ss, ss2, ss3, ss4, ss5, ss6, ss7, ss8, ss9;
   std::string xml_str = get_xml_head();
+  std::string xml_staff;
+  size_t find;
   xml_str += get_DTD_str();
   xml_str += get_first_level_open_tag("project");
   ss << project_id;
   xml_str += get_second_level_object("id", ss.str());
   xml_str += get_second_level_object("name", project_name);
   xml_str += get_second_level_object("description", description);
-  xml_str += get_second_level_object("projectleader", project_leader.get_obj_xml_str());
+  xml_staff = project_leader.get_obj_xml_str();
+  find = xml_staff.find("<staff>");
+  xml_staff = xml_staff.substr(find);
+  find = xml_staff.find("\n");
+  xml_staff = xml_staff.insert(find + 1, "\t\t");
+  find = xml_staff.find("\n", find + 1);
+  xml_staff = xml_staff.insert(find + 1, "\t\t");
+  find = xml_staff.find("\n", find + 1);
+  xml_staff = xml_staff.insert(find + 1, "\t\t");
+  find = xml_staff.find("\n", find + 1);
+  xml_staff = xml_staff.insert(find + 1, "\t\t");
+  find = xml_staff.find("\n", find + 1);
+  xml_staff = xml_staff.insert(find + 1, "\t\t");
+  find = xml_staff.find("\n", find + 1);
+  xml_staff = xml_staff.insert(find + 1, "\t\t");
+  find = xml_staff.find("\n", find + 1);
+  xml_staff = xml_staff.insert(find + 1, "\t\t");
+  find = xml_staff.find("\n", find + 1);
+  xml_staff = xml_staff.insert(find + 1, "\t\t");
+  find = xml_staff.find("\n", find + 1);
+  xml_staff = xml_staff.insert(find + 1, "\t\t");
+  xml_staff = "\n\t\t" + xml_staff + "\t";
+  xml_str += get_second_level_object("projectleader", xml_staff);
   ss2 << working_days_per_week;
   xml_str += get_second_level_object("days_per_week", ss2.str());
   ss3 << working_hours_per_day;
   xml_str += get_second_level_object("hours_per_day", ss3.str());
+  ss4 << get_start_year();
+  xml_str += get_second_level_object("start_year", ss4.str());
+  ss5 << get_start_month();
+  xml_str += get_second_level_object("start_month", ss5.str());
+  ss6 << get_start_day();
+  xml_str += get_second_level_object("start_day", ss6.str());
+  ss7 << get_end_year(); 
+  xml_str += get_second_level_object("end_year", ss7.str());
+  ss8 << get_end_month();
+  xml_str += get_second_level_object("end_month", ss8.str());
+  ss9 << get_end_day();
+  xml_str += get_second_level_object("end_day", ss9.str());
   xml_str += get_first_level_close_tag("project");
   return xml_str;
 }
@@ -401,13 +612,25 @@ time_t Project::get_id() const
 std::string Project::get_DTD_str() const
 {
   std::string str = "<!DOCTYPE project [";
-  str += "\n\t<!ELEMENT project (id, name, description, projectleader, days_per_week, hours_per_day)>";
+  str += "\n\t<!ELEMENT project (id, name, description, projectleader, days_per_week, hours_per_day, start_year, start_month, start_day, end_year, end_month, end_day)>";
   str += "\n\t<!ELEMENT id\t\t(#PCDATA)>";
   str += "\n\t<!ELEMENT name\t\t(#PCDATA)>";
   str += "\n\t<!ELEMENT description\t(#PCDATA)>";
-  str += "\n\t<!ELEMENT projectleader\t(#PCDATA)>";
+  str += "\n\t<!ELEMENT projectleader\t(staff)>";
   str += "\n\t<!ELEMENT days_per_week\t(#PCDATA)>";
   str += "\n\t<!ELEMENT hours_per_day\t(#PCDATA)>";
+  str += "\n\t<!ELEMENT surname\t(#PCDATA)>";
+  str += "\n\t<!ELEMENT initials\t(#PCDATA)>";
+  str += "\n\t<!ELEMENT profession\t(#PCDATA)>";
+  str += "\n\t<!ELEMENT week_hours\t(#PCDATA)>";
+  str += "\n\t<!ELEMENT day_hours\t(#PCDATA)>";
+  str += "\n\t<!ELEMENT start_year\t(#PCDATA)>";
+  str += "\n\t<!ELEMENT start_month\t(#PCDATA)>";
+  str += "\n\t<!ELEMENT start_day\t(#PCDATA)>";
+  str += "\n\t<!ELEMENT end_year\t(#PCDATA)>";
+  str += "\n\t<!ELEMENT end_month\t(#PCDATA)>";
+  str += "\n\t<!ELEMENT end_day\t(#PCDATA)>";
+  str += "\n\t<!ELEMENT staff (id, name, surname, initials, profession, week_hours, day_hours, days_per_week)>";
   str += "\n]>\n";
   return str;
 }

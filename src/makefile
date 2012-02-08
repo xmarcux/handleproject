@@ -9,7 +9,7 @@ handleproject : $(OBJS)
 files.o : staff/staff.h saveobj.h files.h files.cpp
 	$(CC) $(CFLAGS) files.cpp
 
-main.o : staff/job.h staff/staff.h xmlstr.h files.h main.cpp
+main.o : project/project.h staff/job.h staff/staff.h xmlstr.h files.h main.cpp
 	$(CC) $(CFLAGS) main.cpp
 
 xmlstr.o : xmlstr.h xmlstr.cpp

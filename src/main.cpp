@@ -31,6 +31,7 @@
 
 #include "staff/staff.h"
 #include "staff/job.h"
+#include "project/project.h"
 #include <iostream>
 #include <list>
 #include <ctime>
@@ -137,7 +138,7 @@ int main (int argc, char *argv[])
 	{
 	  cout << it->get_obj_xml_str() << endl;
 	}
-	*/
+
 
 	//Testing time
 	struct tm t;
@@ -159,4 +160,26 @@ int main (int argc, char *argv[])
 	struct tm *ttm;
 	ttm = localtime(&tt);
 	cout << "Veckodag: " << ttm->tm_wday << endl;
+	*/
+	
+	Project p = Project("PROJ-23917-NO", "The proj name", "This is what this project is all aboute and so on and so on and so on........", "Putte", "Karlsson", "PK", 2011, 3, 16, 2015, 1, 29);
+
+	cout << "Total working days: " << p.get_total_working_days() << endl;
+	cout << "Project as xml: " << endl << p.get_obj_xml_str();
+	Project pr = Project(p.get_obj_xml_str());
+	cout << pr.get_id() << endl;
+	cout << pr.get_project_no() << endl;
+	cout << pr.get_project_name() << endl;
+	cout << pr.get_description() << endl;
+	cout << pr.get_project_leader_name() << endl;
+	cout << pr.get_project_leader_surname() << endl;
+	cout << pr.get_project_leader_initials() << endl;
+	cout << pr.get_start_year() << endl;
+	cout << pr.get_start_month() << endl;
+	cout << pr.get_start_day() << endl;
+	cout << pr.get_end_year() << endl;
+	cout << pr.get_end_month() << endl;
+	cout << pr.get_end_day() << endl;
+	cout << pr.get_working_days_per_week() << endl;
+	cout << pr.get_working_hours_per_day() << endl;
 }
