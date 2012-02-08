@@ -20,7 +20,6 @@
  ****************************************************************************/
 
 #include "files.h"
-#include "staff/staff.h"
 
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -114,6 +113,15 @@ int save_object_to_db(Saveobj *obj)
     filestream.open(filepath.c_str(), fstream::out);
     filestream << obj->get_obj_xml_str();
   }
+  if(typeid(*obj) == typeid(Project))
+  {
+    stringstream ss;
+    ss << obj->get_id();
+    filepath = projpath;
+    filepath += "/" + ss.str() + ".project";
+    filestream.open(filepath.c_str(), fstream::out);
+    filestream << obj->get_obj_xml_str();
+  }
   filestream.flush();
   filestream.close();
   if(filestream.fail())
@@ -157,4 +165,40 @@ list<Staff> get_staff_from_db()
     closedir(dp);
   }
   return staffl;
+}
+
+list<Project> get_projects_from_db()
+{
+  list<Project> projl;
+  fstream filestream;
+  DIR *dp;
+  struct dirent *dirp;
+
+  if((dp = opendir(projpath)) == NULL)
+  {
+    new_error("Could not open dir:" + string(projpath), "files.cpp", 
+	      "list<Project> get_projects_from_db()");
+  }
+  else
+  {
+    while((dirp = readdir(dp)) != NULL)
+    {
+      if(strcmp(".", dirp->d_name) != 0 && strcmp("..", dirp->d_name) != 0)
+      {
+        int length;
+        char *buffer;
+        string filepath = string(projpath) + "/" + string(dirp->d_name);
+        filestream.open(filepath.c_str(), fstream::in);
+        filestream.seekg(0, ios::end);
+        length = filestream.tellg();
+        filestream.seekg(0, ios::beg);
+        buffer = new char[length];
+        filestream.read(buffer, length);
+        filestream.close();
+        projl.push_back(Project(string(buffer)));
+      }
+    }
+    closedir(dp);
+  }
+  return projl;
 }

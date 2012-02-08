@@ -22,6 +22,7 @@
 #define FILES_H
 
 #include "staff/staff.h"
+#include "project/project.h"
 #include "saveobj.h"
 #include <string>
 #include <list>
@@ -55,5 +56,13 @@ int save_object_to_db(Saveobj *obj);
  * is returned.
  */
 std::list<Staff> get_staff_from_db();
+
+/* Function gets all project objects saved 
+ * to databse.
+ * A list containing all project obejcts in database
+ * is returned.
+ */
+std::list<Project> get_projects_from_db();
+
 #endif
 
