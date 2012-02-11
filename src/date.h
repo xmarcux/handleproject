@@ -43,6 +43,8 @@ class Date
    * month > 12 and < 1, day is 
    * not a valid day in specified month.
    */
+  Date();
+
   Date(int start_year, int start_month, int start_day,
        int end_year, int end_month, int end_day);
 

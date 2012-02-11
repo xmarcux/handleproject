@@ -104,7 +104,7 @@ class Project : public Saveobj, public Date
 
   Project(std::string project_no, std::string project_name, std::string description);
 
-  /* Creates an instance of Staff
+  /* Creates an instance of Project
    * with properies from xml string.
    * If assumed tags are missing
    * variables will be initiated

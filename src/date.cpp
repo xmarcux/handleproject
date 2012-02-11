@@ -23,6 +23,11 @@
 #include <cmath>
 #include <sstream>
 
+Date::Date()
+{
+  init(0, 0, 0, 0, 0, 0);
+}
+
 Date::Date(int start_year, int start_month, int start_day,
 	   int end_year, int end_month, int end_day)
 {

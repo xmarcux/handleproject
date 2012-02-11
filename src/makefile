@@ -1,4 +1,4 @@
-OBJS = files.o main.o xmlstr.o date.o staff/staff.o staff/job.o project/project.o
+OBJS = files.o main.o xmlstr.o date.o staff/staff.o staff/job.o project/project.o project/activity.o
 CC = g++
 CFLAGS = -Wall -c
 LFLAGS = -Wall
@@ -26,6 +26,9 @@ staff/job.o : xmlstr.h saveobj.h staff/job.h staff/job.cpp
 
 project/project.o : xmlstr.h saveobj.h date.h staff/staff.h project/project.h project/project.cpp
 	$(CC) $(CFLAGS) project/project.cpp -o project/project.o
+
+project/activity.o : xmlstr.h saveobj.h date.h project/activity.h project/activity.cpp
+	$(CC) $(CFLAGS) project/activity.cpp -o project/activity.o
 
 clean :
 	\rm *.o *~ handleproject staff/*.o staff/*~ project/*.o project/*~
