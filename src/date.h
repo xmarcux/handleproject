@@ -105,6 +105,7 @@ class Date
   int set_end_year(int year);
   int set_end_month(int month);
   int set_end_day(int day);
+  void set_finished(bool fin);
 
   /* String attribute is a date formated string
    * and should have a format with the minimum year 1900.
@@ -119,6 +120,19 @@ class Date
   int set_start_date(std::string start_date);
   int set_end_date(std::string end_date);
 
+  /* Tells if activity is
+   * finished or if there
+   * is more job to do.
+   */
+  bool is_finished() const;
+
+  /* Returns false if todays
+   * date is smaller or equal
+   * with end date, else 
+   * true is returned.
+   */
+  bool is_late() const;
+
  private:
   int start_year;
   int start_month;
@@ -126,6 +140,7 @@ class Date
   int end_year;
   int end_month;
   int end_day;
+  bool finished;
 
   /* Privte initialization method
    * to initialize object and is

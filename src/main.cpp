@@ -32,6 +32,7 @@
 #include "staff/staff.h"
 #include "staff/job.h"
 #include "project/project.h"
+#include "project/activity.h"
 #include <iostream>
 #include <list>
 #include <ctime>
@@ -161,6 +162,7 @@ int main (int argc, char *argv[])
 	ttm = localtime(&tt);
 	cout << "Veckodag: " << ttm->tm_wday << endl;
 	*/
+
 	
 	Project p = Project("PROJ-23917-NO", "The proj name", "This is what this project is all aboute and so on and so on and so on........", "Putte", "Karlsson", "PK", 2011, 3, 16, 2015, 1, 29);
 
@@ -171,4 +173,15 @@ int main (int argc, char *argv[])
 	list<Project> projl = get_projects_from_db();
 	cout << projl.front().get_obj_xml_str() << endl;
 	*/
+
+	Activity a = Activity(123456789, "activity name", "description bla, bla , bla", "NO-03-dh-09", "2011-12-03", "2012-02-12");//2010, 11, 5, 2011, 12, 13);//, 
+	a.set_finished(true);
+	cout << "name: " << a.get_name() << endl;
+	cout << "id: " << a.get_id() << endl;
+	cout << "number: " << a.get_number() << endl;
+	cout << "desc: " << a.get_description() << endl;
+	cout << "finished: " << a.is_finished() << endl;
+	cout << "is milestone: " << a.is_milestone() << endl;
+	cout << "is_late: " << a.is_late() << endl;
+	cout << a.get_obj_xml_str();
 }

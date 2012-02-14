@@ -37,9 +37,29 @@ class Activity : public Saveobj, public Date
    */
   Activity();
   Activity(time_t id, std::string name, std::string description, std::string number);
+  Activity(time_t id, std::string name, std::string description, std::string number,
+	   int start_year, int start_month, int start_day,
+	   int end_year, int end_month, int end_day);
+  Activity(time_t id, std::string name, std::string description, std::string number, 
+	   std::string start_date, std::string end_date);
   Activity(time_t id, std::string name, std::string description);
+  Activity(time_t id, std::string name, std::string description,
+	   int start_year, int start_month, int start_day,
+	   int end_year, int end_month, int end_day);
+  Activity(time_t id, std::string name, std::string description,
+	   std::string start_date, std::string end_date);
   Activity(std::string name, std::string description, std::string number); 
+  Activity(std::string name, std::string description, std::string number,
+	   int start_year, int start_month, int start_day,
+	   int end_year, int end_month, int end_day); 
+  Activity(std::string name, std::string description, std::string number,
+	   std::string start_date, std::string end_date); 
   Activity(std::string name, std::string description);
+  Activity(std::string name, std::string description,
+	   int start_year, int start_month, int start_day,
+	   int end_year, int end_month, int end_day);
+  Activity(std::string name, std::string description,
+	   std::string start_date, std::string end_date);
 
   /* Creates an instance of Activity
    * with properies from xml string.
@@ -75,7 +95,6 @@ class Activity : public Saveobj, public Date
    * then activity is a milestone.
    */
   bool is_milestone() const;
-
 
  private:
   time_t id;

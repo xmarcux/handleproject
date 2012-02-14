@@ -220,6 +220,11 @@ int Date::set_end_day(int day)
   return 1;
 }
 
+void Date::set_finished(bool fin)
+{
+  finished = fin;
+}
+
 int Date::set_start_date(std::string start_date)
 {
   int *pdate;
@@ -395,16 +400,45 @@ int * Date::date_str_to_int_us(std::string date_string) const
   return int_date;
 }
 
+bool Date::is_finished() const
+{
+  return finished;
+}
+
+bool Date::is_late() const
+{
+  if(finished)
+    return false;
+  else
+  {
+    time_t today;
+    struct tm *tm_today;
+    time(&today);
+    tm_today = localtime(&today);
+    if(tm_today->tm_year + 1900 < get_end_year())
+      return false;
+    else if((tm_today->tm_year + 1900 == get_end_year()) &&
+	    (tm_today->tm_mon + 1 < get_end_month()))
+      return false;
+    else if((tm_today->tm_year + 1900 == get_end_year()) &&
+	    (tm_today->tm_mon + 1 == get_end_month()) &&
+	    (tm_today->tm_mday <= get_end_day()))
+      return false;
+    else
+      return true;  
+  }
+}
 
 void Date::init(int s_year, int s_month, int s_day,
 		int e_year, int e_month, int e_day)
 {
+  finished = false;
   time_t t;
   struct tm *tm_date;
   time(&t);
   tm_date = localtime(&t);
 
-  if(valid_date(s_year, s_month, s_day))
+  if(valid_date(s_year, s_month, s_day) == 1)
   {
     start_year = s_year;
     start_month = s_month;
@@ -417,7 +451,7 @@ void Date::init(int s_year, int s_month, int s_day,
     start_day = tm_date->tm_mday;
   }
 
-  if(valid_date(e_year, e_month, e_day))
+  if(valid_date(e_year, e_month, e_day) == 1)
   {
     end_year = e_year;
     end_month = e_month;

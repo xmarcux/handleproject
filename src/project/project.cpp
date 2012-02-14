@@ -30,7 +30,7 @@ Project::Project(time_t project_id, std::string project_no, std::string project_
 		 int end_year, int end_month, int end_day)
   : Date(start_year, start_month, start_day, end_year, end_month, end_day),
     project_id(project_id), project_no(project_no), project_name(project_name),
-    description(description), 
+    description(description),
     project_leader(Staff(project_leader_name, project_leader_surname, project_leader_initials, ""))
 {
   working_days_per_week = 5;
@@ -58,7 +58,7 @@ Project::Project(std::string project_no, std::string project_name,
 		 int end_year, int end_month, int end_day)
   : Date(start_year, start_month, start_day, end_year, end_month, end_day),
     project_no(project_no), project_name(project_name),
-    description(description),
+    description(description), 
     project_leader(Staff(project_leader_name, project_leader_surname, project_leader_initials, ""))
 {
   time_t t;
@@ -100,7 +100,8 @@ Project::Project(time_t project_id, std::string project_no, std::string project_
 		 std::string description, Staff project_leader,
 		 std::string start_date, std::string end_date)
   : Date(start_date, end_date), project_id(project_id), project_no(project_no),
-    project_name(project_name), description(description), project_leader(project_leader)
+    project_name(project_name), description(description),
+    project_leader(project_leader)
 {
   working_days_per_week = 5;
   working_hours_per_day = 8;
@@ -189,7 +190,7 @@ Project::Project(std::string project_no, std::string project_name,
 		 std::string description, std::string project_leader_name,
 		 std::string project_leader_surname, std::string project_leader_initials)
   : Date(true, ""), project_no(project_no), project_name(project_name),
-    description(description),
+    description(description), 
     project_leader(Staff(project_leader_name, project_leader_surname, project_leader_initials, ""))
 {
   time_t t;
@@ -212,8 +213,8 @@ Project::Project(std::string project_no, std::string project_name,
 }
 
 Project::Project(std::string project_no, std::string project_name, std::string description)
-  : Date(true, ""), project_no(project_no), project_name(project_name), description(description),
-    project_leader(Staff("", ""))
+  : Date(true, ""), project_no(project_no), project_name(project_name), 
+    description(description), project_leader(Staff("", ""))
 {
   time_t t;
   time(&t);
@@ -312,6 +313,20 @@ Project::Project(std::string xmlstring)
   }
   else
     working_hours_per_day = 8;
+
+  find1 = std::string::npos;
+  find2 = std::string::npos;
+  find1 = xmlstring.find("<finished>");
+  find2 = xmlstring.find("</finished>");
+  if(find1 != std::string::npos && find2 != std::string::npos)
+  {
+    if(xmlstring.substr(find1 + 10, find2 - find1 - 10) == "1")
+      set_finished(true);
+    else
+      set_finished(false);
+  }
+  else
+    set_finished(false);
   
   find1 = std::string::npos;
   find2 = std::string::npos;
@@ -584,6 +599,10 @@ std::string Project::get_obj_xml_str() const
   xml_staff = xml_staff.insert(find + 1, "\t\t");
   xml_staff = "\n\t\t" + xml_staff + "\t";
   xml_str += get_second_level_object("projectleader", xml_staff);
+  if(is_finished())
+    xml_str += get_second_level_object("finished", "1");
+  else
+    xml_str += get_second_level_object("finished", "0");
   ss2 << working_days_per_week;
   xml_str += get_second_level_object("days_per_week", ss2.str());
   ss3 << working_hours_per_day;
@@ -612,11 +631,12 @@ time_t Project::get_id() const
 std::string Project::get_DTD_str() const
 {
   std::string str = "<!DOCTYPE project [";
-  str += "\n\t<!ELEMENT project (id, name, description, projectleader, days_per_week, hours_per_day, start_year, start_month, start_day, end_year, end_month, end_day)>";
+  str += "\n\t<!ELEMENT project (id, name, description, projectleader, finished, days_per_week, hours_per_day, start_year, start_month, start_day, end_year, end_month, end_day)>";
   str += "\n\t<!ELEMENT id\t\t(#PCDATA)>";
   str += "\n\t<!ELEMENT name\t\t(#PCDATA)>";
   str += "\n\t<!ELEMENT description\t(#PCDATA)>";
   str += "\n\t<!ELEMENT projectleader\t(staff)>";
+  str += "\n\t<!ELEMENT finished\t(#PCDATA)>";
   str += "\n\t<!ELEMENT days_per_week\t(#PCDATA)>";
   str += "\n\t<!ELEMENT hours_per_day\t(#PCDATA)>";
   str += "\n\t<!ELEMENT surname\t(#PCDATA)>";
