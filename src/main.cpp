@@ -184,4 +184,7 @@ int main (int argc, char *argv[])
 	cout << "is milestone: " << a.is_milestone() << endl;
 	cout << "is_late: " << a.is_late() << endl;
 	cout << a.get_obj_xml_str();
+	cout << endl << "New activity: " << endl;
+	Activity b = Activity(a.get_obj_xml_str());
+	cout << b.get_obj_xml_str() << endl;
 }

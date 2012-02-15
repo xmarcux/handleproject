@@ -116,10 +116,172 @@ Activity::Activity(std::string name, std::string description,
   number = "";
 }
 
-//fix constructor
 Activity::Activity(std::string xmlstring)
 {
+  time_t t;
+  struct tm *tm_now;
+  time(&t);
+  tm_now = localtime(&t);
+  size_t find1, find2;
+  find1 = xmlstring.find("<id>");
+  find2 = xmlstring.find("</id>");
+  if(find1 != std::string::npos && find2 != std::string::npos)
+  {
+    std::stringstream ss;
+    ss << xmlstring.substr(find1 + 4, find2 - find1 - 4);
+    ss >> id;
+    if(ss.fail())
+    {
+      time(&id);
+    }
+  }
 
+  find1 = std::string::npos;
+  find2 = std::string::npos;
+  find1 = xmlstring.find("<name>");
+  find2 = xmlstring.find("</name>");
+  if(find1 != std::string::npos && find2 != std::string::npos)
+    name = xmlstring.substr(find1 + 6, find2 - find1 - 6);
+  else
+    name = "";
+
+  find1 = std::string::npos;
+  find2 = std::string::npos;
+  find1 = xmlstring.find("<description>");
+  find2 = xmlstring.find("</description>");
+  if(find1 != std::string::npos && find2 != std::string::npos)
+    description = xmlstring.substr(find1 + 13, find2 - find1 - 13);
+  else 
+    description = "";
+
+  find1 = std::string::npos;
+  find2 = std::string::npos;
+  find1 = xmlstring.find("<number>");
+  find2 = xmlstring.find("</number>");
+  if(find1 != std::string::npos && find2 != std::string::npos)
+    number = xmlstring.substr(find1 + 8, find2 - find1 - 8);
+  else
+    number = "";
+
+  find1 = std::string::npos;
+  find2 = std::string::npos;
+  find1 = xmlstring.find("<finished>");
+  find2 = xmlstring.find("</finished>");
+  if(find1 != std::string::npos && find2 != std::string::npos)
+  {
+    if(xmlstring.substr(find1 + 10, find2 - find1 -10) == "1")
+      set_finished(true);
+    else
+      set_finished(false);
+  }
+
+  find1 = std::string::npos;
+  find2 = std::string::npos;
+  find1 = xmlstring.find("<start_year>");
+  find2 = xmlstring.find("</start_year");
+  if(find1 != std::string::npos && find2 != std::string::npos)
+  {
+    int year;
+    std::stringstream ss;
+    ss << xmlstring.substr(find1 + 12, find2 - find1 - 12);
+    ss >> year;
+    if(ss.fail())
+      set_start_year(tm_now->tm_year + 1900);
+    else
+      set_start_year(year);
+  }
+  else
+    set_start_year(tm_now->tm_year + 1900);
+
+  find1 = std::string::npos;
+  find2 = std::string::npos;
+  find1 = xmlstring.find("<start_month>");
+  find2 = xmlstring.find("</start_month>");
+  if(find1 != std::string::npos && find2 != std::string::npos)
+  {
+    int month;
+    std::stringstream ss;
+    ss << xmlstring.substr(find1 + 13, find2 - find1 - 13);
+    ss >> month;
+    if(ss.fail())
+      set_start_month(tm_now->tm_mon + 1);
+    else
+      set_start_month(month);
+  }
+  else
+    set_start_month(tm_now->tm_mon + 1);
+
+  find1 = std::string::npos;
+  find2 = std::string::npos;
+  find1 = xmlstring.find("<start_day>");
+  find2 = xmlstring.find("</start_day>");
+  if(find1 != std::string::npos && find2 != std::string::npos)
+  {
+    int day;
+    std::stringstream ss;
+    ss << xmlstring.substr(find1 + 11, find2 - find1 - 11);
+    ss >> day;
+    if(ss.fail())
+      set_start_day(tm_now->tm_mday);
+    else
+      set_start_day(day);
+  }
+  else
+    set_start_day(tm_now->tm_mday);
+
+  find1 = std::string::npos;
+  find2 = std::string::npos;
+  find1 = xmlstring.find("<end_year>");
+  find2 = xmlstring.find("</end_year>");
+  if(find1 != std::string::npos && find2 != std::string::npos)
+  {
+    int year;
+    std::stringstream ss;
+    ss << xmlstring.substr(find1 + 10, find2 - find1 - 10);
+    ss >> year;
+    if(ss.fail())
+      set_end_year(tm_now->tm_year + 1900);
+    else
+      set_end_year(year);
+  }
+  else
+    set_end_year(tm_now->tm_year);
+
+  find1 = std::string::npos;
+  find2 = std::string::npos;
+  find1 = xmlstring.find("<end_month>");
+  find2 = xmlstring.find("</end_month>");
+  if(find1 != std::string::npos && find2 != std::string::npos)
+  {
+    int month;
+    std::stringstream ss;
+    ss << xmlstring.substr(find1 + 11, find2 - find1 - 11);
+    ss >> month;
+    if(ss.fail())
+      set_end_month(tm_now->tm_mon + 1);
+    else
+      set_end_month(month);
+  }
+  else
+    set_end_month(tm_now->tm_mon + 1);
+
+  find1 = std::string::npos;
+  find2 = std::string::npos;
+  find1 = xmlstring.find("<end_day>");
+  find2 = xmlstring.find("</end_day>");
+  if(find1 != std::string::npos && find2 != std::string::npos)
+  {
+    int day;
+    std::stringstream ss;
+    ss << xmlstring.substr(find1 + 9, find2 - find1 - 9);
+    ss >> day;
+    if(ss.fail())
+      set_end_day(tm_now->tm_mday);
+    else
+      set_end_day(day);
+  }
+  else
+    set_end_day(tm_now->tm_mday);
 }
 
 std::string Activity::get_number() const
@@ -157,7 +319,6 @@ void Activity::set_description(std::string desc)
   description = desc;
 }
 
-//fix method
 std::string Activity::get_obj_xml_str() const
 {
   std::stringstream s1, s2, s3, s4, s5, s6, s7;
