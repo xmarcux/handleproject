@@ -21,6 +21,7 @@
 #include "project.h"
 #include "../xmlstr.h"
 #include <ctime>
+#include <cctype>
 #include <sstream>
 
 Project::Project(time_t project_id, std::string project_no, std::string project_name,
@@ -31,7 +32,8 @@ Project::Project(time_t project_id, std::string project_no, std::string project_
   : Date(start_year, start_month, start_day, end_year, end_month, end_day),
     project_id(project_id), project_no(project_no), project_name(project_name),
     description(description),
-    project_leader(Staff(project_leader_name, project_leader_surname, project_leader_initials, ""))
+    project_leader(Staff(project_leader_name, project_leader_surname, project_leader_initials, "")),
+    sort_activities(start_date_sort)
 {
   working_days_per_week = 5;
   working_hours_per_day = 8;
@@ -43,7 +45,7 @@ Project::Project(time_t project_id, std::string project_no, std::string project_
 		 int end_year, int end_month, int end_day)
   : Date(start_year, start_month, start_day, end_year, end_month, end_day),
     project_id(project_id), project_no(project_no), project_name(project_name),
-    description(description), project_leader(project_leader)
+    description(description), project_leader(project_leader), sort_activities(start_date_sort)
 {
   working_days_per_week = 5;
   working_hours_per_day = 8;
@@ -59,7 +61,8 @@ Project::Project(std::string project_no, std::string project_name,
   : Date(start_year, start_month, start_day, end_year, end_month, end_day),
     project_no(project_no), project_name(project_name),
     description(description), 
-    project_leader(Staff(project_leader_name, project_leader_surname, project_leader_initials, ""))
+    project_leader(Staff(project_leader_name, project_leader_surname, project_leader_initials, "")),
+    sort_activities(start_date_sort)
 {
   time_t t;
   time(&t);
@@ -74,7 +77,7 @@ Project::Project(std::string project_no, std::string project_name,
 		 int end_year, int end_month, int end_day)
   : Date(start_year, start_month, start_day, end_year, end_month, end_day),
     project_no(project_no), project_name(project_name),
-    description(description), project_leader(project_leader)
+    description(description), project_leader(project_leader), sort_activities(start_date_sort)
 {
   time_t t;
   time(&t);
@@ -90,7 +93,8 @@ Project::Project(time_t project_id, std::string project_no, std::string project_
 		 std::string start_date, std::string end_date)
   : Date(start_date, end_date), project_id(project_id), project_no(project_no),
     project_name(project_name), description(description),
-    project_leader(Staff(project_leader_name, project_leader_surname, project_leader_initials, ""))
+    project_leader(Staff(project_leader_name, project_leader_surname, project_leader_initials, "")),
+    sort_activities(start_date_sort)
 {
   working_days_per_week = 5;
   working_hours_per_day = 8;
@@ -101,7 +105,7 @@ Project::Project(time_t project_id, std::string project_no, std::string project_
 		 std::string start_date, std::string end_date)
   : Date(start_date, end_date), project_id(project_id), project_no(project_no),
     project_name(project_name), description(description),
-    project_leader(project_leader)
+    project_leader(project_leader), sort_activities(start_date_sort)
 {
   working_days_per_week = 5;
   working_hours_per_day = 8;
@@ -113,7 +117,8 @@ Project::Project(std::string project_no, std::string project_name,
 		 std::string end_date)
   : Date(false, end_date), project_no(project_no), project_name(project_name),
     description(description),
-    project_leader(Staff(project_leader_name, project_leader_surname, project_leader_initials, ""))
+    project_leader(Staff(project_leader_name, project_leader_surname, project_leader_initials, "")),
+    sort_activities(start_date_sort)
 {
   time_t t;
   time(&t);
@@ -126,7 +131,7 @@ Project::Project(std::string project_no, std::string project_name,
 		 std::string description, Staff project_leader, 
 		 std::string end_date)
   : Date(false, end_date), project_no(project_no), project_name(project_name),
-    description(description), project_leader(project_leader)
+    description(description), project_leader(project_leader), sort_activities(start_date_sort)
 {
   time_t t;
   time(&t);
@@ -140,7 +145,7 @@ Project::Project(std::string project_no, std::string project_name, std::string d
 		 int end_year, int end_month, int end_day)
   : Date(start_year, start_month, start_day, end_year, end_month, end_day),
     project_no(project_no), project_name(project_name), description(description),
-    project_leader(Staff("", ""))
+    project_leader(Staff("", "")), sort_activities(start_date_sort)
 {
   time_t t;
   time(&t);
@@ -152,7 +157,7 @@ Project::Project(std::string project_no, std::string project_name, std::string d
 Project::Project(std::string project_no, std::string project_name, std::string description,
 		 std::string start_date, std::string end_date)
   : Date(start_date, end_date), project_no(project_no), project_name(project_name),
-    description(description), project_leader(Staff(start_date, end_date))
+    description(description), project_leader(Staff(start_date, end_date)), sort_activities(start_date_sort)
 {
   time_t t;
   time(&t);
@@ -164,7 +169,7 @@ Project::Project(std::string project_no, std::string project_name, std::string d
 Project::Project(std::string project_no, std::string project_name, std::string description,
 	Staff project_leader, std::string start_date, std::string end_date)
   : Date(start_date, end_date), project_no(project_no), description(description),
-    project_leader(project_leader)
+    project_leader(project_leader), sort_activities(start_date_sort)
 {
   time_t t;
   time(&t);
@@ -177,7 +182,7 @@ Project::Project(std::string project_no, std::string project_name, std::string d
 	Staff project_leader, int working_days_per_week, int working_hours_per_day,
 	std::string start_date, std::string end_date)
   : Date(start_date, end_date), project_no(project_no), project_name(project_name),
-    description(description), project_leader(Staff("", ""))
+    description(description), project_leader(Staff("", "")), sort_activities(start_date_sort)
 {
   time_t t;
   time(&t);
@@ -191,7 +196,8 @@ Project::Project(std::string project_no, std::string project_name,
 		 std::string project_leader_surname, std::string project_leader_initials)
   : Date(true, ""), project_no(project_no), project_name(project_name),
     description(description), 
-    project_leader(Staff(project_leader_name, project_leader_surname, project_leader_initials, ""))
+    project_leader(Staff(project_leader_name, project_leader_surname, project_leader_initials, "")),
+   sort_activities(start_date_sort)
 {
   time_t t;
   time(&t);
@@ -203,7 +209,7 @@ Project::Project(std::string project_no, std::string project_name,
 Project::Project(std::string project_no, std::string project_name,
 		 std::string description, Staff project_leader)
   : Date(true, ""), project_no(project_no), project_name(project_name),
-    description(description), project_leader(project_leader)
+    description(description), project_leader(project_leader), sort_activities(start_date_sort)
 {
   time_t t;
   time(&t);
@@ -214,7 +220,7 @@ Project::Project(std::string project_no, std::string project_name,
 
 Project::Project(std::string project_no, std::string project_name, std::string description)
   : Date(true, ""), project_no(project_no), project_name(project_name), 
-    description(description), project_leader(Staff("", ""))
+    description(description), project_leader(Staff("", "")), sort_activities(start_date_sort)
 {
   time_t t;
   time(&t);
@@ -279,6 +285,25 @@ Project::Project(std::string xmlstring)
   }
   else
     project_leader = Staff("", "");
+
+  find1 = std::string::npos;
+  find2 = std::string::npos;
+  find1 = xmlstring.find("<activities_sort>");
+  find2 = xmlstring.find("</activities_sort>");
+  if(find1 != std::string::npos && find2 != std::string::npos)
+  {
+    std::string ssort = xmlstring.substr(find1 + 17, find2 - find1 - 17);
+    if(ssort == "end_date_sort")
+      sort_activities = end_date_sort;
+    else if(ssort == "alpha_name_sort")
+      sort_activities = alpha_name_sort;
+    else if(ssort == "alpha_name_reverse_sort")
+      sort_activities = alpha_name_reverse_sort;
+    else
+      sort_activities = start_date_sort;
+  }
+  else
+    sort_activities = start_date_sort;
 
   find1 = std::string::npos;
   find2 = std::string::npos;
@@ -512,6 +537,22 @@ int Project::get_total_working_hours() const
   return get_total_working_days() * working_hours_per_day;
 }
 
+std::list<Activity> Project::get_activities() const
+{
+  return activities;
+}
+
+Activity Project::get_activity(time_t activity_id)
+{
+  std::list<Activity>::iterator it;
+  for( it = activities.begin(); it != activities.end(); it++)
+  {
+    if(it->get_id() == activity_id)
+      return *it;
+  }
+  return Activity();
+}
+
 void Project::set_project_id(time_t proj)
 {
   project_id = proj;
@@ -564,6 +605,42 @@ void Project::set_working_hours_per_day(int hours)
     working_hours_per_day = hours;
 }
 
+void Project::set_activities(std::list<Activity> acts)
+{
+  activities = acts;
+  sort();
+  //save all to file
+}
+
+void Project::add_activity(Activity act)
+{
+  remove_activity(act.get_id());
+  activities.push_back(act);
+  sort();
+  //save to file
+}
+
+int Project::remove_activity(time_t activity_id)
+{
+  std::list<Activity>::iterator it;
+  for(it = activities.begin(); it != activities.end(); it++)
+  {
+    if(it->get_id() == activity_id)
+    {
+      activities.erase(it);
+      return 1;
+      //remove from file
+    }
+  }
+  return -1;
+}
+
+void Project::sort_order_activities(Project::sort_order s)
+{
+  sort_activities = s;
+  sort();
+}
+
 std::string Project::get_obj_xml_str() const
 {
   std::stringstream ss, ss2, ss3, ss4, ss5, ss6, ss7, ss8, ss9;
@@ -599,6 +676,14 @@ std::string Project::get_obj_xml_str() const
   xml_staff = xml_staff.insert(find + 1, "\t\t");
   xml_staff = "\n\t\t" + xml_staff + "\t";
   xml_str += get_second_level_object("projectleader", xml_staff);
+  if(sort_activities == end_date_sort)
+    xml_str += get_second_level_object("activities_sort", "end_date_sort");
+  else if(sort_activities == alpha_name_sort)
+    xml_str += get_second_level_object("activities_sort", "alpha_name_sort");
+  else if(sort_activities == alpha_name_reverse_sort)
+    xml_str += get_second_level_object("activities_sort", "alpha_name_reverse_sort");
+  else
+    xml_str += get_second_level_object("activities_sort", "start_date_sort");
   if(is_finished())
     xml_str += get_second_level_object("finished", "1");
   else
@@ -628,20 +713,30 @@ time_t Project::get_id() const
   return project_id;
 }
 
+void Project::sort()
+{
+  if(sort_activities == end_date_sort)
+    activities.sort(activities_sort_end_date_order);
+  else if(sort_activities == alpha_name_sort)
+    activities.sort(activities_sort_name_order);
+  else if(sort_activities == alpha_name_reverse_sort)
+    activities.sort(activities_sort_reverse_name_order);
+  else
+    activities.sort(activities_sort_start_date_order);
+}
+
 std::string Project::get_DTD_str() const
 {
   std::string str = "<!DOCTYPE project [";
-  str += "\n\t<!ELEMENT project (id, name, description, projectleader, finished, days_per_week, hours_per_day, start_year, start_month, start_day, end_year, end_month, end_day)>";
+  str += "\n\t<!ELEMENT project (id, name, description, projectleader, activities_sort, finished, days_per_week, hours_per_day, start_year, start_month, start_day, end_year, end_month, end_day)>";
   str += "\n\t<!ELEMENT id\t\t(#PCDATA)>";
   str += "\n\t<!ELEMENT name\t\t(#PCDATA)>";
   str += "\n\t<!ELEMENT description\t(#PCDATA)>";
   str += "\n\t<!ELEMENT projectleader\t(staff)>";
+  str += "\n\t<!ELEMENT activities_sort\t(#PCDATA)>";
   str += "\n\t<!ELEMENT finished\t(#PCDATA)>";
   str += "\n\t<!ELEMENT days_per_week\t(#PCDATA)>";
   str += "\n\t<!ELEMENT hours_per_day\t(#PCDATA)>";
-  str += "\n\t<!ELEMENT surname\t(#PCDATA)>";
-  str += "\n\t<!ELEMENT initials\t(#PCDATA)>";
-  str += "\n\t<!ELEMENT profession\t(#PCDATA)>";
   str += "\n\t<!ELEMENT week_hours\t(#PCDATA)>";
   str += "\n\t<!ELEMENT day_hours\t(#PCDATA)>";
   str += "\n\t<!ELEMENT start_year\t(#PCDATA)>";
@@ -653,4 +748,91 @@ std::string Project::get_DTD_str() const
   str += "\n\t<!ELEMENT staff (id, name, surname, initials, profession, week_hours, day_hours, days_per_week)>";
   str += "\n]>\n";
   return str;
+}
+
+bool activities_sort_start_date_order(Activity a, Activity b)
+{
+  if(a.get_start_year() >= b.get_start_year())
+  {
+    if(a.get_start_month() >= b.get_start_month())
+    {
+      if(a.get_start_day() >= b.get_start_day())
+	return true;
+      else
+	return false;
+    }
+    else
+      return false;
+  }
+  else
+    return false;
+}
+
+bool activities_sort_end_date_order(Activity a, Activity b)
+{
+  if(a.get_end_year() >= b.get_end_year())
+  {
+    if(a.get_end_month() >= b.get_end_month())
+    {
+      if(a.get_end_day() >= b.get_end_day())
+	return true;
+      else
+	return false;
+    }
+    else
+      return false;
+  }
+  else
+    return false;
+}
+
+bool activities_sort_name_order(Activity a, Activity b)
+{
+  size_t length = 0;
+  std::string str_a, str_b;
+  str_a = a.get_name();
+  str_b = b.get_name();
+
+  for(size_t i = 0; i < str_a.length(); i++)
+    str_a[i] = tolower(str_a[i]);
+
+  for(size_t j = 0; j < str_b.length(); j++)
+    str_b[j] = tolower(str_b[j]);
+
+  if(str_a.length() <= str_b.length())
+    length = str_a.length();
+  else
+    length = str_b.length();
+
+  for(size_t k = 0; k < length; k++)
+  {
+    if(str_a[k] >= 232 && str_a[k] <= 235)
+      str_a[k] = 'e';
+    if(str_b[k] >= 232 && str_b[k] <= 235)
+      str_b[k] = 'e';
+    if(str_a[k] >= 236 && str_a[k] <= 239)
+      str_a[k] = 'i';
+    if(str_b[k] >= 236 && str_b[k] <= 239)
+      str_b[k] = 'i';
+    if(str_a[k] >= 242 && str_a[k] <= 243)
+      str_a[k] = 'o';
+    if(str_b[k] >= 242 && str_b[k] <= 243)
+      str_b[k] = 'o';
+    if(str_a[k] >= 249 && str_a[k] <= 250)
+      str_a[k] = 'u';
+    if(str_b[k] >= 249 && str_b[k] <= 250)
+      str_b[k] = 'u';
+    if(str_a[k] == 228)
+      str_a[k] = 230;
+    if(str_b[k] == 228)
+      str_b[k] = 230;
+    if(str_a[k] > str_b[k])
+      return false;
+  }
+  return true;
+}
+
+bool activities_sort_reverse_name_order(Activity a, Activity b)
+{
+  return !activities_sort_name_order(a, b);
 }

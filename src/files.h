@@ -23,6 +23,7 @@
 
 #include "staff/staff.h"
 #include "project/project.h"
+#include "project/activity.h"
 #include "saveobj.h"
 #include <string>
 #include <list>
@@ -50,12 +51,50 @@ void new_error(std::string err_text, std::string in_file, std::string in_functio
  */
 int save_object_to_db(Saveobj *obj);
 
+/* Function deletes saved object file
+ * from database.
+ * Returns a positive value on success,
+ * a negative value on falure and zero
+ * if file does not exist.
+ */
+int delete_object_from_db(Saveobj *obj);
+
+/* Function saves activity as an xml-file to database.
+ * project_no is the number of the project
+ * that the activity belongs to.
+ * Returns a positive value on success and a negative value
+ * on falure.
+ */
+int save_activity_to_db(Activity *act, size_t project_no);
+
+/* Function deletes saved activity file
+ * from database.
+ * project_no is the number of the project
+ * that the activity belongs to.
+ * Returns a positive value on success,
+ * a negative value on falure and zero
+ * if file does not exist.
+ */
+int delete_activity_from_db(Activity *act, size_t project_no);
+
+/* Function takes project id as an argument.
+ * A list containing all activities that
+ * belongs to project is returned.
+ */
+std::list<Activity> get_activities_from_db(size_t project_no);
+
 /* Function gets all staff objects saved 
  * to databse.
  * A list containing all staff obejcts in database
  * is returned.
  */
 std::list<Staff> get_staff_from_db();
+
+/* Function takes project id as an argument.
+ * The complete project is read from file
+ * including activities and is returned.
+ */
+Project get_project_from_db(size_t project_no);
 
 /* Function gets all project objects saved 
  * to databse.

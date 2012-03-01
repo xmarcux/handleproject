@@ -25,6 +25,8 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <fstream>
+#include <cstdio>
+#include <cerrno>
 #include <ctime>
 #include <cstring>
 #include <typeinfo>
@@ -131,6 +133,77 @@ int save_object_to_db(Saveobj *obj)
   return 1;
 }
 
+int delete_object_from_db(Saveobj *obj)
+{
+  string filepath;
+  ifstream ifilestream;
+  if(typeid(*obj) == typeid(Staff))
+  {
+    stringstream ss, serr;
+    ss << obj->get_id();
+    filepath = staffpath;
+    filepath += "/" + ss.str() + ".staff";
+    ifilestream.open(filepath.c_str());
+    if(ifilestream.is_open())
+    {
+      ifilestream.close();
+      if(remove(filepath.c_str()) != 0)
+      {
+	serr << errno;
+	new_error("Errorno: " + serr.str() + " ,Can not delete Staff object.", 
+		  "files.cpp", "delete_object_from_db");
+	return -1;
+      }
+      else
+	return 1;
+    }
+    else
+      return 0;
+  }
+  if(typeid(&obj) == typeid(Project))
+  {
+    stringstream ss, serr;
+    ss << obj->get_id();
+    filepath = projpath;
+    filepath += "/" + ss.str() + ".project";
+    ifilestream.open(filepath.c_str());
+    if(ifilestream.is_open())
+    {
+      ifilestream.close();
+      if(remove(filepath.c_str()) != 0)
+      {
+	serr << errno;
+	new_error("Errorno: " + serr.str() + " , Can not delete Project object", 
+		  "files.cpp", "delete_object_from_db");
+	return -1;
+      }
+      else
+	return 1;
+    }
+    else
+      return 0;
+  }
+  return 0;
+}
+
+int save_activity_to_db(Activity *act, size_t project_no)
+{
+  fstream filestream;
+  stringstream ss, ss2;
+  string filepath;
+  filepath = projpath;
+  ss << project_no;
+  ss2 << act->get_id();
+  filepath += "/" + ss.str() + "_" + ss2.str() + ".activity";
+  filestream.open(filepath.c_str(), fstream::out);
+  filestream << act->get_obj_xml_str();
+  filestream.flush();
+  filestream.close();
+  if(filestream.fail())
+    return -1;
+  return 1;
+}
+
 list<Staff> get_staff_from_db()
 {
   list<Staff> staffl;
@@ -202,3 +275,6 @@ list<Project> get_projects_from_db()
   }
   return projl;
 }
+
+// add get activity from db
+

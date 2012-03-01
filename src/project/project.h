@@ -24,7 +24,9 @@
 #include "../saveobj.h"
 #include "../date.h"
 #include "../staff/staff.h"
+#include "activity.h"
 #include <string>
+#include <list>
 
 /* Project class contains the main
  * information about the project, 
@@ -36,6 +38,8 @@
 class Project : public Saveobj, public Date
 {
  public:
+  /* Sort order for activities, to use with sort_activities method. */
+  enum sort_order {start_date_sort, end_date_sort, alpha_name_sort, alpha_name_reverse_sort};
   /* Constructors for Project.
    * Default project id is time now in seconds
    * from the epoq.
@@ -126,6 +130,13 @@ class Project : public Saveobj, public Date
   int get_working_hours_per_day() const;
   int get_total_working_days() const;
   int get_total_working_hours() const;
+  std::list<Activity> get_activities() const;
+
+  /* Returns Activity with specified id number.
+   * If Activity is not found a new activity
+   * is returned with a different id.
+   */
+  Activity get_activity(time_t activity_id);
 
   /* Methods to change properties
    * of the object.
@@ -141,6 +152,18 @@ class Project : public Saveobj, public Date
   void set_working_days_per_week(int days);
   void set_working_hours_per_day(int hours);
 
+  /* Replacing all existing activities
+   * with attribute list.
+   */
+  void set_activities(std::list<Activity> acts);
+  void add_activity(Activity act);
+
+  /* Returns 1 if Activity removed, else -1 */
+  int remove_activity(time_t activity_id);
+
+  /* Use enum type defined in class. */
+  void sort_order_activities(Project::sort_order s);
+
   /* Inhereted method from Saveobj. */
   std::string get_obj_xml_str() const;
 
@@ -148,6 +171,11 @@ class Project : public Saveobj, public Date
   time_t get_id() const;
 
  private:
+  /* Sort activities acording 
+   * to variable sort_activities
+   */
+  void sort();
+
   time_t project_id;
   std::string project_no;
   std::string project_name;
@@ -155,9 +183,19 @@ class Project : public Saveobj, public Date
   Staff project_leader;
   int working_days_per_week;
   int working_hours_per_day;
+  std::list<Activity> activities;
+  Project::sort_order sort_activities;
 
   /* Inhereted method from Saveobj. */
   std::string get_DTD_str() const;
 };
+
+/* For sorting activity list in Project.
+ * Returns true if a>=b.
+ */
+bool activities_sort_start_date_order(Activity a, Activity b);
+bool activities_sort_end_date_order(Activity a, Activity b);
+bool activities_sort_name_order(Activity a, Activity b);
+bool activities_sort_reverse_name_order(Activity a, Activity b);
 
 #endif
