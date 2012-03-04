@@ -48,6 +48,8 @@ void new_error(std::string err_text, std::string in_file, std::string in_functio
  * to file, by using method get_obj_xml_str().
  * Returns a positive value on success and a negative value
  * on falure.
+ * Only object itself is saved no subobjects.
+ * Subobject saves need to be handled separately.
  */
 int save_object_to_db(Saveobj *obj);
 
