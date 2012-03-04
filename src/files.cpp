@@ -194,7 +194,7 @@ int save_activity_to_db(Activity *act, size_t project_no)
   filepath = projpath;
   ss << project_no;
   ss2 << act->get_id();
-  filepath += "/" + ss.str() + "_" + ss2.str() + ".activity";
+  filepath += "/" + ss2.str() + "_" + ss.str() + ".activity";
   filestream.open(filepath.c_str(), fstream::out);
   filestream << act->get_obj_xml_str();
   filestream.flush();
@@ -202,6 +202,72 @@ int save_activity_to_db(Activity *act, size_t project_no)
   if(filestream.fail())
     return -1;
   return 1;
+}
+
+int delete_activity_from_db(Activity *act, size_t project_no)
+{
+  ifstream ifile;
+  string filepath;
+  stringstream ss, ss2, serr;
+  filepath = projpath;
+  ss << act->get_id();
+  ss2 << project_no;
+  filepath += "/" + ss.str() + "_" + ss2.str() + ".activity";
+  ifile.open(filepath.c_str(), ifstream::in);
+  if(ifile.is_open())
+  {
+    ifile.close();
+    if(remove(filepath.c_str()) != 0)
+    {
+      serr << errno;
+      new_error("Error no: " + serr.str() + "Can not delete Activity object file",
+		"files.cpp", "delete_activity_from_db");
+      return -1;
+    }
+    else
+      return 1;
+  }
+  return 0;
+}
+
+list<Activity> get_activities_from_db(size_t project_no)
+{
+  list<Activity> lact;
+  string filename;
+  fstream filestream;
+  DIR *dp;
+  struct dirent *dirp;
+  stringstream ss;
+  ss << project_no;
+  filename = ss.str() + ".activity";
+
+  if((dp = opendir(projpath)) == NULL)
+  {
+    new_error("Could not open dir: " + string(projpath), "files.cpp",
+	      "list<Activity> get_activities_from_db()");
+  }
+  else
+  {
+    while((dirp = readdir(dp)) != NULL)
+    {
+      if(strstr(dirp->d_name, filename.c_str()) != NULL)
+      {
+	int length;
+	char *buffer;
+	string filepath = string(projpath) + "/" + string(dirp->d_name);
+	filestream.open(filepath.c_str(), fstream::in);
+	filestream.seekg(0, ios::end);
+	length = filestream.tellg();
+	filestream.seekg(0, ios::beg);
+	buffer = new char[length];
+	filestream.read(buffer, length);
+	filestream.close();
+	lact.push_back(Activity(string(buffer)));
+      }
+    }
+    closedir(dp); 
+  }
+  return lact;
 }
 
 list<Staff> get_staff_from_db()
@@ -240,6 +306,31 @@ list<Staff> get_staff_from_db()
   return staffl;
 }
 
+Project get_project_from_db(size_t project_no)
+{
+  Project proj("");
+  fstream filestream;
+  int length;
+  char *buffer;
+  stringstream ss;
+  string filepath = projpath;
+  ss << project_no;
+  filepath += "/" + ss.str() + ".project";
+  filestream.open(filepath.c_str(), fstream::in);
+  if(filestream.is_open())
+  {
+    filestream.seekg(0, ios::end);
+    length = filestream.tellg();
+    filestream.seekg(0, ios::beg);
+    buffer = new char[length];
+    filestream.read(buffer, length);
+    filestream.close();
+    proj = Project(string(buffer));
+    proj.set_activities(get_activities_from_db(project_no));
+  }
+  return proj;
+}
+
 list<Project> get_projects_from_db()
 {
   list<Project> projl;
@@ -275,6 +366,3 @@ list<Project> get_projects_from_db()
   }
   return projl;
 }
-
-// add get activity from db
-
