@@ -186,7 +186,7 @@ int delete_object_from_db(Saveobj *obj)
   return 0;
 }
 
-int save_activity_to_db(Activity *act, size_t project_no)
+int save_activity_to_db(Activity *act, time_t project_no)
 {
   fstream filestream;
   stringstream ss, ss2;
@@ -204,7 +204,7 @@ int save_activity_to_db(Activity *act, size_t project_no)
   return 1;
 }
 
-int delete_activity_from_db(Activity *act, size_t project_no)
+int delete_activity_from_db(Activity *act, time_t project_no)
 {
   ifstream ifile;
   string filepath;
@@ -230,7 +230,7 @@ int delete_activity_from_db(Activity *act, size_t project_no)
   return 0;
 }
 
-list<Activity> get_activities_from_db(size_t project_no)
+list<Activity> get_activities_from_db(time_t project_no)
 {
   list<Activity> lact;
   string filename;
@@ -326,7 +326,7 @@ Project get_project_from_db(size_t project_no)
     filestream.read(buffer, length);
     filestream.close();
     proj = Project(string(buffer));
-    proj.set_activities(get_activities_from_db(project_no));
+    proj.set_activities(get_activities_from_db(project_no), false);
   }
   return proj;
 }
@@ -347,7 +347,8 @@ list<Project> get_projects_from_db()
   {
     while((dirp = readdir(dp)) != NULL)
     {
-      if(strcmp(".", dirp->d_name) != 0 && strcmp("..", dirp->d_name) != 0)
+      if(strcmp(".", dirp->d_name) != 0 && strcmp("..", dirp->d_name) != 0 &&
+	 strstr(dirp->d_name, ".project") != 0)
       {
         int length;
         char *buffer;

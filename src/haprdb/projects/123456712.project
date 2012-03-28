@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project [
+	<!ELEMENT project (id, number,  name, description, projectleader, activities_sort, finished, days_per_week, hours_per_day, start_year, start_month, start_day, end_year, end_month, end_day)>
+	<!ELEMENT id		(#PCDATA)>
+	<!ELEMENT number	(#PCDATA)>
+	<!ELEMENT name		(#PCDATA)>
+	<!ELEMENT description	(#PCDATA)>
+	<!ELEMENT projectleader	(staff)>
+	<!ELEMENT activities_sort	(#PCDATA)>
+	<!ELEMENT finished	(#PCDATA)>
+	<!ELEMENT days_per_week	(#PCDATA)>
+	<!ELEMENT hours_per_day	(#PCDATA)>
+	<!ELEMENT week_hours	(#PCDATA)>
+	<!ELEMENT day_hours	(#PCDATA)>
+	<!ELEMENT start_year	(#PCDATA)>
+	<!ELEMENT start_month	(#PCDATA)>
+	<!ELEMENT start_day	(#PCDATA)>
+	<!ELEMENT end_year	(#PCDATA)>
+	<!ELEMENT end_month	(#PCDATA)>
+	<!ELEMENT end_day	(#PCDATA)>
+	<!ELEMENT staff (id, name, surname, initials, profession, week_hours, day_hours, days_per_week)>
+]>
+<project>
+	<id>123456712</id>
+	<number>QQQ-22-LLL</number>
+	<name>Fibercabel</name>
+	<description>Digging, installation, patching of a 12 miles long fibercabel.</description>
+	<projectleader>
+		<staff>
+			<id>1332877152</id>
+			<name>Ann</name>
+			<surname>Sets</surname>
+			<initials>AS</initials>
+			<profession></profession>
+			<week_hours>40</week_hours>
+			<day_hours>8</day_hours>
+			<days_per_week>5</days_per_week>
+		</staff>
+	</projectleader>
+	<activities_sort>start_date_sort</activities_sort>
+	<finished>0</finished>
+	<days_per_week>5</days_per_week>
+	<hours_per_day>8</hours_per_day>
+	<start_year>2006</start_year>
+	<start_month>3</start_month>
+	<start_day>18</start_day>
+	<end_year>2008</end_year>
+	<end_month>1</end_month>
+	<end_day>6</end_day>
+</project>

@@ -20,9 +20,11 @@
 
 #include "project.h"
 #include "../xmlstr.h"
+#include "../files.h"
 #include <ctime>
 #include <cctype>
 #include <sstream>
+
 
 Project::Project(time_t project_id, std::string project_no, std::string project_name,
 		 std::string description, std::string project_leader_name, 
@@ -252,6 +254,15 @@ Project::Project(std::string xmlstring)
   }
   else
     time(&project_id);
+
+  find1 = std::string::npos;
+  find2 = std::string::npos;
+  find1 = xmlstring.find("<number>");
+  find2 = xmlstring.find("</number>");
+  if(find1 != std::string::npos && find2 != std::string::npos)
+  {
+    project_no = xmlstring.substr(find1 + 8, find2 - find1 - 8);
+  }
 
   find1 = std::string::npos;
   find2 = std::string::npos;
@@ -605,19 +616,24 @@ void Project::set_working_hours_per_day(int hours)
     working_hours_per_day = hours;
 }
 
-void Project::set_activities(std::list<Activity> acts)
+void Project::set_activities(std::list<Activity> acts, bool save_to_db)
 {
   activities = acts;
   sort();
-  //save all to file
+  if(save_to_db)
+  {
+    for(std::list<Activity>::iterator it=acts.begin(); it != acts.end(); it++)
+      save_activity_to_db(&(*it), project_id);
+  }
 }
 
-void Project::add_activity(Activity act)
+void Project::add_activity(Activity act, bool save_to_db)
 {
   remove_activity(act.get_id());
   activities.push_back(act);
   sort();
-  //save to file
+  if(save_to_db)
+    save_activity_to_db(&act, project_id);
 }
 
 int Project::remove_activity(time_t activity_id)
@@ -627,9 +643,9 @@ int Project::remove_activity(time_t activity_id)
   {
     if(it->get_id() == activity_id)
     {
+      delete_activity_from_db(&(*it), project_id);
       activities.erase(it);
       return 1;
-      //remove from file
     }
   }
   return -1;
@@ -651,6 +667,7 @@ std::string Project::get_obj_xml_str() const
   xml_str += get_first_level_open_tag("project");
   ss << project_id;
   xml_str += get_second_level_object("id", ss.str());
+  xml_str += get_second_level_object("number", project_no);
   xml_str += get_second_level_object("name", project_name);
   xml_str += get_second_level_object("description", description);
   xml_staff = project_leader.get_obj_xml_str();
@@ -728,8 +745,9 @@ void Project::sort()
 std::string Project::get_DTD_str() const
 {
   std::string str = "<!DOCTYPE project [";
-  str += "\n\t<!ELEMENT project (id, name, description, projectleader, activities_sort, finished, days_per_week, hours_per_day, start_year, start_month, start_day, end_year, end_month, end_day)>";
+  str += "\n\t<!ELEMENT project (id, number,  name, description, projectleader, activities_sort, finished, days_per_week, hours_per_day, start_year, start_month, start_day, end_year, end_month, end_day)>";
   str += "\n\t<!ELEMENT id\t\t(#PCDATA)>";
+  str += "\n\t<!ELEMENT number\t(#PCDATA)>";
   str += "\n\t<!ELEMENT name\t\t(#PCDATA)>";
   str += "\n\t<!ELEMENT description\t(#PCDATA)>";
   str += "\n\t<!ELEMENT projectleader\t(staff)>";
@@ -752,11 +770,11 @@ std::string Project::get_DTD_str() const
 
 bool activities_sort_start_date_order(Activity a, Activity b)
 {
-  if(a.get_start_year() >= b.get_start_year())
+  if(a.get_start_year() <= b.get_start_year())
   {
-    if(a.get_start_month() >= b.get_start_month())
+    if(a.get_start_month() <= b.get_start_month())
     {
-      if(a.get_start_day() >= b.get_start_day())
+      if(a.get_start_day() <= b.get_start_day())
 	return true;
       else
 	return false;
@@ -770,11 +788,11 @@ bool activities_sort_start_date_order(Activity a, Activity b)
 
 bool activities_sort_end_date_order(Activity a, Activity b)
 {
-  if(a.get_end_year() >= b.get_end_year())
+  if(a.get_end_year() <= b.get_end_year())
   {
-    if(a.get_end_month() >= b.get_end_month())
+    if(a.get_end_month() <= b.get_end_month())
     {
-      if(a.get_end_day() >= b.get_end_day())
+      if(a.get_end_day() <= b.get_end_day())
 	return true;
       else
 	return false;
@@ -827,7 +845,13 @@ bool activities_sort_name_order(Activity a, Activity b)
     if(str_b[k] == 228)
       str_b[k] = 230;
     if(str_a[k] > str_b[k])
+    {
       return false;
+    }
+    if(str_a[k] < str_b[k])
+    {
+      return true;
+    }
   }
   return true;
 }

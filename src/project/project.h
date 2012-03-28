@@ -155,8 +155,8 @@ class Project : public Saveobj, public Date
   /* Replacing all existing activities
    * with attribute list.
    */
-  void set_activities(std::list<Activity> acts);
-  void add_activity(Activity act);
+  void set_activities(std::list<Activity> acts, bool save_to_db=true);
+  void add_activity(Activity act, bool save_to_db=true);
 
   /* Returns 1 if Activity removed, else -1 */
   int remove_activity(time_t activity_id);

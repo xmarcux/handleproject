@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE activity [
+	<!ELEMENT activity (id, name, description, number, finished, start_year, start_month, start_day, end_year, end_month, end_day)>
+	<!ELEMENT id		(#PCDATA)>
+	<!ELEMENT name		(#PCDATA)>
+	<!ELEMENT description	(#PCDATA)>
+	<!ELEMENT number	(#PCDATA)>
+	<!ELEMENT finished	(#PCDATA)>
+	<!ELEMENT start_year	(#PCDATA)>
+	<!ELEMENT start_month	(#PCDATA)>
+	<!ELEMENT start_day	(#PCDATA)>
+	<!ELEMENT end_year	(#PCDATA)>
+	<!ELEMENT end_month	(#PCDATA)>
+	<!ELEMENT end_day	(#PCDATA)>
+]>
+<activity>
+	<id>1234567803</id>
+	<name>Make roof</name>
+	<description>After the walls are built, put the roof on top.</description>
+	<number></number>
+	<finished>0</finished>
+	<start_year>2011</start_year>
+	<start_month>9</start_month>
+	<start_day>27</start_day>
+	<end_year>2012</end_year>
+	<end_month>3</end_month>
+	<end_day>1</end_day>
+</activity>

@@ -67,7 +67,7 @@ int delete_object_from_db(Saveobj *obj);
  * Returns a positive value on success and a negative value
  * on falure.
  */
-int save_activity_to_db(Activity *act, size_t project_no);
+int save_activity_to_db(Activity *act, time_t project_no);
 
 /* Function deletes saved activity file
  * from database.
@@ -77,13 +77,13 @@ int save_activity_to_db(Activity *act, size_t project_no);
  * a negative value on falure and zero
  * if file does not exist.
  */
-int delete_activity_from_db(Activity *act, size_t project_no);
+int delete_activity_from_db(Activity *act, time_t project_no);
 
 /* Function takes project id as an argument.
  * A list containing all activities that
  * belongs to project is returned.
  */
-std::list<Activity> get_activities_from_db(size_t project_no);
+std::list<Activity> get_activities_from_db(time_t project_no);
 
 /* Function gets all staff objects saved 
  * to databse.

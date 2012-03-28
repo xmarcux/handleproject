@@ -33,158 +33,95 @@
 #include "staff/job.h"
 #include "project/project.h"
 #include "project/activity.h"
+#include "ui/mainwindow.h"
 #include <iostream>
 #include <list>
 #include <ctime>
+#include <gtkmm/main.h>
 
 using namespace std;
 
 int main (int argc, char *argv[])
 {
-	initdb();
+  initdb();
+  /* To create projects in database for test
+    Project p1(12345678, "we-92771-900", "A small house", 
+	     "This project just contains a construction of a small house.",
+	     "Kit", "Meiers", "KM", 
+	     2011, 2, 18,
+	     2012, 6, 5);
+  save_object_to_db(&p1);
+  Activity a1(1234567801, "Put down concreate", "Make the base of the house.",
+	      "2011-02-28", "2011-08-11");
+  p1.add_activity(a1);
+  Activity a2(1234567802, "Build walls", "Build up all walls for the house.",
+	      "2011-08-11", "2011-09-23");
+  p1.add_activity(a2);
+  Activity a3(1234567803, "Make roof", "After the walls are built, put the roof on top.",
+	      "2011-09-27", "2012-03-01");
+  p1.add_activity(a3);
 
-	//testing
-	//	Job j(1234, "My first job", 4321, 1912, 3, 4, 2012, 4, 5, 8);
-	Job j(1234, "My first job");
-	cout << "Startyear: " << j.get_start_year() << endl;
-	cout << "Startmonth: " << j.get_start_month() << endl;
-	cout << "Startday: " << j.get_start_day() << endl;
-	cout << "Endyear: " << j.get_end_year() << endl;
-	cout << "Endmonth: " << j.get_end_month() << endl;
-	cout << "Endday: " << j.get_end_day() << endl;
-	cout << "Hours per day: " << j.get_hours_per_day() << endl;
-	cout << "Staffid: " << j.get_staff_id() << endl;
-	cout << "Projectid: " << j.get_project_id() << endl;
-	cout << "Desc: " << j.get_description() << endl;
-	cout << "Startdtate str eu: " << j.get_start_date_str_eu() << endl;
-	cout << "Enddate str eu: " << j.get_end_date_str_eu() << endl;
-	cout << "Startdtate str us: " << j.get_start_date_str_us() << endl;
-	cout << "Enddate str us: " << j.get_end_date_str_us() << endl << endl;
-	cout << "Start_year: " << j.get_start_year() << endl;
-	j.set_start_date("2012-01-04");
-	j.set_end_date("2012-02-16");
+  Project p2(12345679, "827773", "Burner", 
+	     "Implementation and installation of small burner for a\n single family house",
+	     "John", "Fergusson", "JF", 
+	     2009, 1, 4,
+	     2011, 9, 18);
+  save_object_to_db(&p2);
+  Activity a4(1234567901, "Order burner", "Burner must be ordered to be delivered in time.",
+	      "2009-01-08", "2009-01-08");
+  p2.add_activity(a4);
+  Activity a5(1234567902, "Burner delivery", "Latest date for burner delivery",
+	      "2011-01-10", "2011-01-10");
+  p2.add_activity(a5);
 
-	cout << j.get_obj_xml_str() << endl;
-	cout << "working days: " << j.total_working_hours(5) << endl << endl;
-	//	string s1 = j.get_obj_xlm_str();
-	Job j2(j.get_obj_xml_str());
-	cout << "j2" << endl << j2.get_obj_xml_str() << endl << endl;
-	j.set_finished(true);
-	//	string s2 = j.get_obj_xlm_str();
-	Job j3(j.get_obj_xml_str());
-	cout << "j3" << endl << j3.get_obj_xml_str() << endl << endl;
-	/* 	cout << "Startdtate str eu: " << j.get_start_date_str_eu() << endl;
- 	cout << "Enddate str eu: " << j.get_end_date_str_eu() << endl;
-	j.set_start_date("1919-01-32");*/
-	//	j.set_end_date("1/2/11");
-	// 	cout << "Startdtate str eu: " << j.get_start_date_str_eu() << endl;
-	// 	cout << "Enddate str eu: " << j.get_end_date_str_eu() << endl;
-	/*	j.set_start_date("12-02-29");
-	j.set_end_date("6/30/1800");
- 	cout << "Startdtate str eu: " << j.get_start_date_str_eu() << endl;
- 	cout << "Enddate str eu: " << j.get_end_date_str_eu() << endl;
-	/*
-	Staff s("Marcus", "Pedersén", "Serviceingenjör", 40.0);
-	cout << s.get_name() << " " << s.get_surname() << s.get_profession() << endl;
-	cout << s.get_week_working_hours() << "" << s.get_day_working_hours();
-	cout << " " << s.get_working_days_per_week() << endl;
-	
-	s.set_working_days_per_week(7.0);
-	cout << s.get_name() << " " << s.get_surname() << s.get_profession() << endl;
-	cout << s.get_week_working_hours() << "" << s.get_day_working_hours();
-	cout << " " << s.get_working_days_per_week() << endl;
+  Project p3(123456710, "AA 79 JB", "New block", 
+	     "A project in building up an entire block with houses and infrastructure.",
+	     "Bert", "Johnsson", "BJ", 
+	     2006, 8, 30,
+	     2026, 1, 1);
+  save_object_to_db(&p3);
+  Activity a6(12345671001, "Concreate.", "Other entrepeneur put down concreate.",
+	      "2007-02-28", "2007-10-18");
+  p3.add_activity(a6);
+  Activity a7(12345671002, "Build houses", "Building of all 16 houses in the block.",
+	      "2008-04-20", "2010-01-01");
+  p3.add_activity(a7);
 
-	cout << s.get_obj_xml_str();
+  Project p4(123456711, "P1", "New server delivery", 
+	     "Configuration, installation and delivery of one new server,",
+	     "Curt", "Jobs", "KJ", 
+	     2012, 2, 1,
+	     2012, 12, 23);
+  save_object_to_db(&p4);
+  Activity a8(12345671101, "Make specification", "Make calculations and decide hardware needed.",
+	      "2012-02-05", "2012-03-01");
+  p4.add_activity(a8);
+  Activity a9(12345671102, "Build houses", "Building of all 16 houses in the block.",
+	      "2008-04-20", "2010-01-01");
+  p4.add_activity(a9);
 
-	s.set_week_working_hours(7.0);
-	cout << s.get_name() << " " << s.get_surname() << s.get_profession() << endl;
-	cout << s.get_week_working_hours() << "" << s.get_day_working_hours();
-	cout << " " << s.get_working_days_per_week() << endl << endl;
+  Project p5(123456712, "QQQ-22-LLL", "Fibercabel", 
+	     "Digging, installation, patching of a 12 miles long fibercabel.",
+	     "Ann", "Sets", "AS", 
+	     2006, 3, 18,
+	     2008, 1, 6);
+  save_object_to_db(&p5);
+  Activity a10(12345671201, "Messure length", "Messure length and dicide way to draw cable.",
+	      "2006-04-01", "2006-11-29");
+  p5.add_activity(a10);
+  Activity a11(12345671202, "Dig the road", "Digging of the road where the fiber shoul be.",
+	      "2007-05-02", "2007-10-02");
+  p5.add_activity(a11);
 
-	string xmlstr = "<?xml version=\"1.0\" ?>\
-<!DOCTYPE staff [\
-	<!ELEMENT staff(name, surname, profession, week_hours, day_hours, days_per_week)>\
-	<!ELEMENT name		(#CDATA)>\
-	<!ELEMENT surname	(#CDATA)>\
-	<!ELEMENT profession	(#CDATA)>\
-	<!ELEMENT week_hours	(#CDATA)>\
-	<!ELEMENT day_hours	(#CDATA)>\
-	<!ELEMENT days_per_week	(#CDATA)>\
-]>\
-<staff>\
-	<name>Putte</name>\
-	<surname>Karlsson</surname>\
-	<profession>Rörmockare</profession>\
-	<id>1234567890</id>\
-	<week_hours>100</week_hours>\
-	<day_hours>20</day_hours>\
-	<days_per_week>5</days_per_week>\
-</staff>";
-
-	Staff p(xmlstr);
-
-	cout << p.get_name() << " " << p.get_surname() << " " <<  p.get_profession() << endl;
-	cout << p.get_week_working_hours() << " " << p.get_day_working_hours();
-	cout << " " << p.get_working_days_per_week() << endl << p.get_id() << endl;
-	/*
-	if(save_object_to_db(&s) < 0)
-	  cout << "can not write s object to file" << endl;
-	if(save_object_to_db(&p) < 0)
-	  cout << "can not write p object to file" << endl;
-	*/
-	/*
-	list<Staff> ls = get_staff_from_db();
-	list<Staff>::iterator it = ls.begin();
-	for(;it != ls.end(); it++)
-	{
-	  cout << it->get_obj_xml_str() << endl;
-	}
-
-
-	//Testing time
-	struct tm t;
-	t.tm_year = 2012 -1900;
-	t.tm_mon = 6 -1;
-	t.tm_mday = 17;
-	t.tm_hour = 1;
-	t.tm_min = 0;
-	time_t tt = mktime(&t);
-	cout << "Veckodag innan: " << t.tm_wday << endl;
-	if(t.tm_wday == 0)
-	  t.tm_mday = t.tm_mday - 6;
-	else
-	  t.tm_mday = 1 + t.tm_mday - t.tm_wday;
-	mktime(&t);
-	cout << "mon: " << t.tm_mon << endl;
-	cout << "Mday: " << t.tm_mday << endl;
-	cout << "Veckodag innan: " << t.tm_wday << endl;
-	struct tm *ttm;
-	ttm = localtime(&tt);
-	cout << "Veckodag: " << ttm->tm_wday << endl;
-	*/
-
-	
-	Project p = Project("PROJ-23917-NO", "The proj name", "This is what this project is all aboute and so on and so on and so on........", "Putte", "Karlsson", "PK", 2011, 3, 16, 2015, 1, 29);
-
-	cout << "Total working days: " << p.get_total_working_days() << endl;
-	cout << "Project as xml: " << endl << p.get_obj_xml_str() << endl << endl;
-
-	/*save_object_to_db(&p);
-	list<Project> projl = get_projects_from_db();
-	cout << projl.front().get_obj_xml_str() << endl;
-	*/
-
-	Activity a = Activity(123456789, "activity name", "description bla, bla , bla", "NO-03-dh-09", "2011-12-03", "2012-02-12");//2010, 11, 5, 2011, 12, 13);//, 
-	a.set_finished(true);
-	cout << "name: " << a.get_name() << endl;
-	cout << "id: " << a.get_id() << endl;
-	cout << "number: " << a.get_number() << endl;
-	cout << "desc: " << a.get_description() << endl;
-	cout << "finished: " << a.is_finished() << endl;
-	cout << "is milestone: " << a.is_milestone() << endl;
-	cout << "is_late: " << a.is_late() << endl;
-	cout << a.get_obj_xml_str();
-	cout << endl << "New activity: " << endl;
-	Activity b = Activity(a.get_obj_xml_str());
-	cout << b.get_obj_xml_str() << endl;
+  Project p6(123456713, "PROJ1", "First official job", 
+	     "The first job sold by our salesperson.",
+	     "John", "Johnsson", "JJ", 
+	     2001, 2, 23,
+	     2003, 12, 8);
+  save_object_to_db(&p6);*/
+  Gtk::Main kit(argc, argv);
+  MainWindow w;
+  Gtk::Main::run(w);
+  
+  return 0;
 }
