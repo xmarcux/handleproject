@@ -1,5 +1,5 @@
 OBJS = files.o main.o xmlstr.o date.o staff/staff.o staff/job.o \
-project/project.o project/activity.o ui/mainwindow.o
+project/project.o project/activity.o ui/mainwindow.o ui/about.o
 CC = g++
 CFLAGS = -Wall -c
 LFLAGS = -Wall
@@ -32,8 +32,11 @@ project/project.o : xmlstr.h saveobj.h date.h files.h staff/staff.h project/acti
 project/activity.o : xmlstr.h saveobj.h date.h project/activity.h project/activity.cpp
 	$(CC) $(CFLAGS) project/activity.cpp -o project/activity.o
 
-ui/mainwindow.o : files.h project/project.h ui/mainwindow.h ui/mainwindow.cpp
+ui/mainwindow.o : files.h project/project.h ui/about.h ui/mainwindow.h ui/mainwindow.cpp
 	$(CC) $(CFLAGS) ui/mainwindow.cpp -o ui/mainwindow.o $(GTKFLAGS)
+
+ui/about.o: ui/about.h ui/about.cpp
+	$(CC) $(CFLAGS) ui/about.cpp -o ui/about.o $(GTKFLAGS)
 
 clean :
 	\rm *.o *~ handleproject staff/*.o staff/*~ project/*.o project/*~ ui/*.o ui/*~

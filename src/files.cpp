@@ -38,6 +38,7 @@ using namespace std;
 const char *dbpath = "haprdb";
 const char *projpath = "haprdb/projects";
 const char *staffpath = "haprdb/staff";
+const char *histpath = "haprdb/history";
 const char *errfile = "error";
 
 void initdb()
@@ -61,6 +62,10 @@ void initdb()
       {
 	new_error(string("Could not create dir: ").append(staffpath), "files.cpp", "initdb()");
       }
+      if(mkdir(histpath, dir_mode) != 0)
+      {
+	new_error(string("Could not create dir: ").append(histpath), "files.cpp", "initdb()");
+      }
     }
   }
   else
@@ -78,6 +83,14 @@ void initdb()
       if(mkdir(staffpath, dir_mode) != 0)
       {
 	new_error(string("Could not create dir: ").append(staffpath), "files.cpp", "initdb()");
+      }
+    }
+
+    if(stat(histpath, &state_db) == -1)
+    {
+      if(mkdir(histpath, dir_mode) != 0)
+      {
+	new_error(string("Could not create dir: ").append(histpath), "files.cpp", "initdb()");
       }
     }
   }
@@ -133,7 +146,7 @@ int save_object_to_db(Saveobj *obj)
   return 1;
 }
 
-int delete_object_from_db(Saveobj *obj)
+int delete_object_from_db(Saveobj *obj, project_state state)
 {
   string filepath;
   ifstream ifilestream;
@@ -141,7 +154,10 @@ int delete_object_from_db(Saveobj *obj)
   {
     stringstream ss, serr;
     ss << obj->get_id();
-    filepath = staffpath;
+    if(state == ACTIVE_PROJECT)
+      filepath = staffpath;
+    else
+      filepath = histpath;
     filepath += "/" + ss.str() + ".staff";
     ifilestream.open(filepath.c_str());
     if(ifilestream.is_open())
@@ -160,11 +176,14 @@ int delete_object_from_db(Saveobj *obj)
     else
       return 0;
   }
-  if(typeid(&obj) == typeid(Project))
+  if(typeid(*obj) == typeid(Project))
   {
     stringstream ss, serr;
     ss << obj->get_id();
-    filepath = projpath;
+    if(state == ACTIVE_PROJECT)
+      filepath = projpath;
+    else
+      filepath = histpath;
     filepath += "/" + ss.str() + ".project";
     ifilestream.open(filepath.c_str());
     if(ifilestream.is_open())
@@ -204,12 +223,15 @@ int save_activity_to_db(Activity *act, time_t project_no)
   return 1;
 }
 
-int delete_activity_from_db(Activity *act, time_t project_no)
+int delete_activity_from_db(Activity *act, time_t project_no, project_state state)
 {
   ifstream ifile;
   string filepath;
   stringstream ss, ss2, serr;
-  filepath = projpath;
+  if(state == ACTIVE_PROJECT)
+    filepath = projpath;
+  else
+    filepath = histpath;
   ss << act->get_id();
   ss2 << project_no;
   filepath += "/" + ss.str() + "_" + ss2.str() + ".activity";
@@ -230,20 +252,25 @@ int delete_activity_from_db(Activity *act, time_t project_no)
   return 0;
 }
 
-list<Activity> get_activities_from_db(time_t project_no)
+list<Activity> get_activities_from_db(time_t project_no, project_state state)
 {
   list<Activity> lact;
+  const char *path;
   string filename;
   fstream filestream;
   DIR *dp;
   struct dirent *dirp;
   stringstream ss;
+  if(state == ACTIVE_PROJECT)
+    path = projpath;
+  else
+    path = histpath;
   ss << project_no;
   filename = ss.str() + ".activity";
 
-  if((dp = opendir(projpath)) == NULL)
+  if((dp = opendir(path)) == NULL)
   {
-    new_error("Could not open dir: " + string(projpath), "files.cpp",
+    new_error("Could not open dir: " + string(path), "files.cpp",
 	      "list<Activity> get_activities_from_db()");
   }
   else
@@ -254,7 +281,7 @@ list<Activity> get_activities_from_db(time_t project_no)
       {
 	int length;
 	char *buffer;
-	string filepath = string(projpath) + "/" + string(dirp->d_name);
+	string filepath = string(path) + "/" + string(dirp->d_name);
 	filestream.open(filepath.c_str(), fstream::in);
 	filestream.seekg(0, ios::end);
 	length = filestream.tellg();
@@ -306,14 +333,18 @@ list<Staff> get_staff_from_db()
   return staffl;
 }
 
-Project get_project_from_db(size_t project_no)
+Project get_project_from_db(size_t project_no, project_state state)
 {
   Project proj("");
   fstream filestream;
   int length;
   char *buffer;
   stringstream ss;
-  string filepath = projpath;
+  string filepath;
+  if(state == ACTIVE_PROJECT)
+    filepath = projpath;
+  else
+    filepath = histpath;
   ss << project_no;
   filepath += "/" + ss.str() + ".project";
   filestream.open(filepath.c_str(), fstream::in);
@@ -331,16 +362,21 @@ Project get_project_from_db(size_t project_no)
   return proj;
 }
 
-list<Project> get_projects_from_db()
+list<Project> get_projects_from_db(project_state state)
 {
   list<Project> projl;
   fstream filestream;
   DIR *dp;
   struct dirent *dirp;
+  const char *path;
+  if(state == ACTIVE_PROJECT)
+    path = projpath;
+  else
+    path = histpath;
 
-  if((dp = opendir(projpath)) == NULL)
+  if((dp = opendir(path)) == NULL)
   {
-    new_error("Could not open dir:" + string(projpath), "files.cpp", 
+    new_error("Could not open dir:" + string(path), "files.cpp", 
 	      "list<Project> get_projects_from_db()");
   }
   else
@@ -352,7 +388,7 @@ list<Project> get_projects_from_db()
       {
         int length;
         char *buffer;
-        string filepath = string(projpath) + "/" + string(dirp->d_name);
+        string filepath = string(path) + "/" + string(dirp->d_name);
         filestream.open(filepath.c_str(), fstream::in);
         filestream.seekg(0, ios::end);
         length = filestream.tellg();
@@ -366,4 +402,68 @@ list<Project> get_projects_from_db()
     closedir(dp);
   }
   return projl;
+}
+
+int move_project_to_history(Project *proj, project_state state)
+{
+  string filepath;
+  fstream filestream;
+  stringstream ss;
+  ss << proj->get_id();
+  if(state == ACTIVE_PROJECT)
+    filepath = histpath;
+  else
+    filepath = projpath;
+  filepath += "/"+ ss.str() + ".project";
+  filestream.open(filepath.c_str(), fstream::out);
+  filestream << proj->get_obj_xml_str();
+  filestream.flush();
+  filestream.close();
+  if(filestream.fail())
+    return -1;
+  
+  list<Activity> lact = proj->get_activities();
+  for(list<Activity>::iterator it = lact.begin(); it != lact.end(); it++)
+  {
+    stringstream ss2;
+    ss2 << it->get_id();
+    if(state == ACTIVE_PROJECT)
+      filepath = histpath;
+    else
+      filepath = projpath;
+    filepath += "/" + ss2.str() + "_" + ss.str() + ".activity";
+    filestream.open(filepath.c_str(), fstream::out);
+    filestream << it->get_obj_xml_str();
+    filestream.flush();
+    filestream.close();
+    if(filestream.fail())
+      return -1;
+  }
+
+  if(state == ACTIVE_PROJECT)
+  {
+    if(delete_object_from_db(proj) <= 0)
+      return -1;
+  }
+  else
+  {
+    if(delete_object_from_db(proj, HISTORY_PROJECT) <= 0)
+      return -1;
+  }
+
+  for(list<Activity>::iterator it = lact.begin(); it != lact.end(); it++)
+  {
+    if(state == ACTIVE_PROJECT)
+    {
+      if(delete_activity_from_db(&(*it), proj->get_id()) <= 0)
+	return -1;
+    }
+    else
+    {
+      if(delete_activity_from_db(&(*it), proj->get_id(), HISTORY_PROJECT) <= 0)
+	return -1;
+    }
+  }
+
+  return 1;
 }

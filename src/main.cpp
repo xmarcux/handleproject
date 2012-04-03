@@ -44,6 +44,25 @@ using namespace std;
 int main (int argc, char *argv[])
 {
   initdb();
+  /* To create a project in history
+  Project ph(987654321, "883-GH-9908-21", "Create a game", 
+	     "In this project a game will be made",
+	     "Hans", "Hers", "HH", 
+	     2004, 3, 28,
+	     2010, 1, 23);
+
+  //  save_object_to_db(&ph);
+  Activity ah1(98765432101, "Analyse project", "Go through all manuscript and analyse.",
+	      "2004-04-01", "2004-08-31");
+  ph.add_activity(ah1);
+  Activity ah2(98765432102, "Code", "Create and compile all code needed.",
+	      "2004-09-01", "2009-04-03");
+  ph.add_activity(ah2);
+  Activity ah3(98765432103, "Test the game", "A complete test of the entire game.",
+	      "2009-05-01", "2010-01-01");
+  ph.add_activity(ah3);
+  move_project_to_history(&ph, ACTIVE_PROJECT);*/
+
   /* To create projects in database for test
     Project p1(12345678, "we-92771-900", "A small house", 
 	     "This project just contains a construction of a small house.",

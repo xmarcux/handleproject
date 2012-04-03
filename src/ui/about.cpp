@@ -18,38 +18,34 @@
  *                                                                          *
  ****************************************************************************/
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#include "about.h"
+#include <glibmm/i18n.h>
+#include <gdkmm/pixbuf.h>
+#include <fstream>
 
-#include <gtkmm.h>
-
-/* The main window for Handle Project.
- * This window shows a list with all
- * projects in the database, and an 
- * open project button.
- */
-class MainWindow : public Gtk::Window
+About::About()
 {
- public:
-  MainWindow();
-  virtual ~MainWindow();
-
- protected:
-  Glib::RefPtr<Gtk::UIManager> refUIManager;
-  Glib::RefPtr<Gtk::ActionGroup> refActionGroup;
-  Gtk::ScrolledWindow scrollview;
+  set_icon_from_file("images/HaPr_high_80x100_ver2.gif");
+  set_logo(Gdk::Pixbuf::create_from_file("images/HandleProject_300x70.gif"));
+  set_program_name("Handle Project");
+  set_version("Alpha");
+  set_copyright("Copyright (C) 2011, 2012 Marcus Pedersén");
+  set_comments(_("Be in control of your projects.\nHandle your projects.\n\nThis program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.\nFor details click \"License\""));
+  //  set_license_type(Gtk::LICENSE_GPL_3_0);
+  int length;
+  char *buffer;
+  std::fstream stream;
+  stream.open("images/GPLV3", std::fstream::in);
+  stream.seekg(0, std::fstream::end);
+  length = stream.tellg();
+  stream.seekg(0,std::fstream::beg);
+  buffer = new char[length];
+  stream.read(buffer, length);
+  stream.close();
+  set_license(buffer);
+  delete[] buffer;
   
-  // Creates the menu, use to initialize.
-  void create_menu(Gtk::VBox *vbox);
 
-  //Signal handlers:
-  void on_action_file_open();
-  void on_action_file_delete();
-  void on_action_file_exit();
-  void on_action_file_new();
-  void on_action_file_export();
-  void on_action_file_import();
-  void on_action_help_help();
-  void on_action_help_about();
-};
-#endif
+  set_wrap_license(true);
+  set_website("http://www.handleproject.org");
+}

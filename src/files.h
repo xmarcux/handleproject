@@ -28,6 +28,12 @@
 #include <string>
 #include <list>
 
+/* Enumeration to decide if to look in 
+ * active projects or projects that are 
+ * finished and moved to history.
+ */
+enum project_state {ACTIVE_PROJECT, HISTORY_PROJECT};
+
 /* Functon initializes database if it does not
  * already exists. 
  * It creates directories needed for Handle Project.
@@ -59,7 +65,7 @@ int save_object_to_db(Saveobj *obj);
  * a negative value on falure and zero
  * if file does not exist.
  */
-int delete_object_from_db(Saveobj *obj);
+int delete_object_from_db(Saveobj *obj, project_state state = ACTIVE_PROJECT);
 
 /* Function saves activity as an xml-file to database.
  * project_no is the number of the project
@@ -77,13 +83,13 @@ int save_activity_to_db(Activity *act, time_t project_no);
  * a negative value on falure and zero
  * if file does not exist.
  */
-int delete_activity_from_db(Activity *act, time_t project_no);
+int delete_activity_from_db(Activity *act, time_t project_no, project_state state = ACTIVE_PROJECT);
 
 /* Function takes project id as an argument.
  * A list containing all activities that
  * belongs to project is returned.
  */
-std::list<Activity> get_activities_from_db(time_t project_no);
+std::list<Activity> get_activities_from_db(time_t project_no, project_state state = ACTIVE_PROJECT);
 
 /* Function gets all staff objects saved 
  * to databse.
@@ -96,14 +102,23 @@ std::list<Staff> get_staff_from_db();
  * The complete project is read from file
  * including activities and is returned.
  */
-Project get_project_from_db(size_t project_no);
+Project get_project_from_db(size_t project_no, project_state state = ACTIVE_PROJECT);
 
 /* Function gets all project objects saved 
  * to databse.
  * A list containing all project obejcts in database
  * is returned.
  */
-std::list<Project> get_projects_from_db();
+std::list<Project> get_projects_from_db(project_state state = ACTIVE_PROJECT);
+
+/* Function moves a project from active database
+ * to history if state is an active project. 
+ * This should be done when project is finished.
+ * If state is history project then the project
+ * will be moved back to active again.
+ * Returns 1 on success or -1 on falure.
+ */
+int move_project_to_history(Project *proj, project_state state = ACTIVE_PROJECT);
 
 #endif
 
