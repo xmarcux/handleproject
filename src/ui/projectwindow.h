@@ -18,43 +18,29 @@
  *                                                                          *
  ****************************************************************************/
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef PROJECTWINDOW_H
+#define PROJECTWINDOW_H
 
 #include "../project/project.h"
-#include <gtkmm.h>
+#include <gtkmm/window.h>
 
-/* The main window for Handle Project.
- * This window shows a list with all
- * projects in the database, and an 
- * open project button.
+//#include <gtkmm/treemodelcolumn.h>
+
+/* This class is the window that
+ * shows one specific project.
+ * Window will show all activities,
+ * information on project and
+ * ways to be able to change project.
  */
-class MainWindow : public Gtk::Window
+class ProjectWindow : public Gtk::Window
 {
  public:
-  MainWindow();
-  virtual ~MainWindow();
+  ProjectWindow();
+  //  ProjectWindow(Project p);
+  virtual ~ProjectWindow();
 
- protected:
-  Glib::RefPtr<Gtk::UIManager> refUIManager;
-  Glib::RefPtr<Gtk::ActionGroup> refActionGroup;
-  Gtk::ScrolledWindow scrollview;
-  Glib::RefPtr<Gtk::ListStore> ref_tree_model;
-  Gtk::TreeModelColumn<std::string> *test_c;
-
-  // Creates the menu, use to initialize.
-  void create_menu(Gtk::VBox *vbox);
-
-  void add_new_project(Project p);
-
-  //Signal handlers:
-  void on_action_file_open();
-  void on_action_file_delete();
-  void on_action_file_exit();
-  void on_action_file_new();
-  void on_action_file_export();
-  void on_action_file_import();
-  void on_action_help_help();
-  void on_action_help_about();
+ private:
+  //Gtk::TreeModelColumn<std::string> *test_c;
 };
+
 #endif

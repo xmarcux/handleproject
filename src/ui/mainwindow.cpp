@@ -20,8 +20,9 @@
 
 #include "mainwindow.h"
 #include "about.h"
+#include "neweditdialog.h"
+#include "projectwindow.h"
 #include "../files.h"
-#include "../project/project.h"
 #include <list>
 #include <sstream>
 #include <glibmm/i18n.h>
@@ -33,6 +34,7 @@ MainWindow::MainWindow()
   set_size_request(200, 200);
   set_default_size(500, 300);
   set_position(Gtk::WIN_POS_CENTER);
+  signal_hide().connect(sigc::mem_fun(*this, &MainWindow::on_action_file_exit));
   Gtk::VBox *const main_box = new Gtk::VBox(false, 0);
   add(*Gtk::manage(main_box));
   create_menu(main_box);
@@ -89,7 +91,8 @@ MainWindow::MainWindow()
   col_record->add(*col_start_date);
   col_record->add(*col_end_date);
 
-  Glib::RefPtr<Gtk::ListStore> ref_tree_model = Gtk::ListStore::create(*col_record);
+  //  Glib::RefPtr<Gtk::ListStore> ref_tree_model = Gtk::ListStore::create(*col_record);
+  ref_tree_model = Gtk::ListStore::create(*col_record);
   treeview->set_model(ref_tree_model);
 
   int j = 0;
@@ -281,6 +284,21 @@ void MainWindow::create_menu(Gtk::VBox *vbox)
     vbox->pack_start(*pToolbar, Gtk::PACK_SHRINK);
 }
 
+void MainWindow::add_new_project(Project p)
+{
+  /*  Gtk::TreeModel::Row row;
+  row = *(ref_tree_model->append());
+  row[*col_id] = p.get_id();
+  row[*col_no] = p.get_project_no();
+  row[*col_name] = p.get_project_name();
+  row[*col_desc] = p.get_description();
+  row[*col_leader_name] = p.get_project_leader_name();
+  row[*col_leader_surname] = p.get_project_leader_surname();
+  row[*col_start_date] = p.get_start_date_str_eu();
+  row[*col_end_date] = p.get_end_date_str_eu();
+  */
+}
+
 void MainWindow::on_action_file_open()
 {
 
@@ -293,12 +311,12 @@ void MainWindow::on_action_file_delete()
 
 void MainWindow::on_action_file_exit()
 {
-  hide();
+  Gtk::Main::quit();
 }
 
 void MainWindow::on_action_file_new()
 {
-
+  NewEditDialog d(*this);
 }
 
 void MainWindow::on_action_file_export()
@@ -318,10 +336,14 @@ void MainWindow::on_action_help_help()
 
 void MainWindow::on_action_help_about()
 {
-  About a;
-  a.run();
+  //  About a;
+  //  a.run();
+  //test
+  ProjectWindow *pw = new ProjectWindow();
+  pw->show();
 }
 
 MainWindow::~MainWindow()
 {
+
 }

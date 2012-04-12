@@ -18,43 +18,48 @@
  *                                                                          *
  ****************************************************************************/
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#include "splashwindow.h"
+#include "mainwindow.h"
+#include <gtkmm/box.h>
+#include <gtkmm/image.h>
+#include <gtkmm/label.h>
+#include <glibmm/i18n.h>
 
-#include "../project/project.h"
-#include <gtkmm.h>
-
-/* The main window for Handle Project.
- * This window shows a list with all
- * projects in the database, and an 
- * open project button.
- */
-class MainWindow : public Gtk::Window
+SplashWindow::SplashWindow()
 {
- public:
-  MainWindow();
-  virtual ~MainWindow();
+  set_title("Handle Project");
+  set_decorated(false);
+  set_icon_from_file("images/HaPr_high_80x100_ver2.gif");
+  set_position(Gtk::WIN_POS_CENTER);
 
- protected:
-  Glib::RefPtr<Gtk::UIManager> refUIManager;
-  Glib::RefPtr<Gtk::ActionGroup> refActionGroup;
-  Gtk::ScrolledWindow scrollview;
-  Glib::RefPtr<Gtk::ListStore> ref_tree_model;
-  Gtk::TreeModelColumn<std::string> *test_c;
+  Gtk::VBox *main_box = new Gtk::VBox();
+  Gtk::manage(main_box);
+  Gtk::Image *logo = new Gtk::Image("images/HandleProject_300x70.gif");
+  main_box->pack_start(*logo);
+  Gtk::manage(logo);
 
-  // Creates the menu, use to initialize.
-  void create_menu(Gtk::VBox *vbox);
+  Gtk::Label *cright = new Gtk::Label("Copyright (C) 2011, 2012 Marcus Pedersén\n");
+  main_box->pack_start(*cright);
+  Gtk::manage(cright);
 
-  void add_new_project(Project p);
+  Gtk::Label *info1 = new Gtk::Label(_("Be in control of your projects."));
+  main_box->pack_start(*info1);
+  Gtk::manage(info1);
 
-  //Signal handlers:
-  void on_action_file_open();
-  void on_action_file_delete();
-  void on_action_file_exit();
-  void on_action_file_new();
-  void on_action_file_export();
-  void on_action_file_import();
-  void on_action_help_help();
-  void on_action_help_about();
-};
-#endif
+  Gtk::Label *info2 = new Gtk::Label(_("Handle your projects."));
+  main_box->pack_start(*info2);
+  Gtk::manage(info2);
+
+  Gtk::Label *comment = new Gtk::Label(_("\n\nThis program is free software: you can redistribute it\nand/or modify it under the terms\nof the GNU General Public License\nas published by the Free Software Foundation,\neither version 3 of the License,\nor (at your option) any later version."));
+  main_box->pack_start(*comment);
+  Gtk::manage(comment);
+
+  Gtk::Box *cont_area = get_vbox();
+  cont_area->pack_start(*main_box);
+  show_all_children();
+}
+
+SplashWindow::~SplashWindow()
+{
+
+}

@@ -34,6 +34,7 @@
 #include "project/project.h"
 #include "project/activity.h"
 #include "ui/mainwindow.h"
+#include "ui/splashwindow.h"
 #include <iostream>
 #include <list>
 #include <ctime>
@@ -139,8 +140,13 @@ int main (int argc, char *argv[])
 	     2003, 12, 8);
   save_object_to_db(&p6);*/
   Gtk::Main kit(argc, argv);
-  MainWindow w;
-  Gtk::Main::run(w);
+  //  SplashWindow *sw = new SplashWindow();
+  //  sw->show();
+  MainWindow *mw = new MainWindow();
+  mw->show();
+  Gtk::Main::run();
+  //  MainWindow w;
+  //  Gtk::Main::run(w);
   
   return 0;
 }

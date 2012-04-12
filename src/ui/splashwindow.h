@@ -18,43 +18,16 @@
  *                                                                          *
  ****************************************************************************/
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef SPLASHWINDOW_H
+#define SPLASHWINDOW_H
 
-#include "../project/project.h"
-#include <gtkmm.h>
+#include <gtkmm/dialog.h>
 
-/* The main window for Handle Project.
- * This window shows a list with all
- * projects in the database, and an 
- * open project button.
- */
-class MainWindow : public Gtk::Window
+class SplashWindow : public Gtk::Dialog
 {
  public:
-  MainWindow();
-  virtual ~MainWindow();
-
- protected:
-  Glib::RefPtr<Gtk::UIManager> refUIManager;
-  Glib::RefPtr<Gtk::ActionGroup> refActionGroup;
-  Gtk::ScrolledWindow scrollview;
-  Glib::RefPtr<Gtk::ListStore> ref_tree_model;
-  Gtk::TreeModelColumn<std::string> *test_c;
-
-  // Creates the menu, use to initialize.
-  void create_menu(Gtk::VBox *vbox);
-
-  void add_new_project(Project p);
-
-  //Signal handlers:
-  void on_action_file_open();
-  void on_action_file_delete();
-  void on_action_file_exit();
-  void on_action_file_new();
-  void on_action_file_export();
-  void on_action_file_import();
-  void on_action_help_help();
-  void on_action_help_about();
+  SplashWindow();
+  virtual ~SplashWindow();
 };
+
 #endif

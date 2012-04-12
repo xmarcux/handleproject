@@ -18,43 +18,35 @@
  *                                                                          *
  ****************************************************************************/
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef NEWEDITDIALOG_H
+#define NEWEDITDIALOG_H
 
+#include <gtkmm/dialog.h>
+#include <gtkmm/window.h>
+#include <gtkmm/entry.h>
+#include <gtkmm/textview.h>
 #include "../project/project.h"
-#include <gtkmm.h>
 
-/* The main window for Handle Project.
- * This window shows a list with all
- * projects in the database, and an 
- * open project button.
- */
-class MainWindow : public Gtk::Window
+class NewEditDialog : public Gtk::Dialog
 {
  public:
-  MainWindow();
-  virtual ~MainWindow();
+  /* If no project is given as attribute
+   * a window for creating a new project
+   * is displayed.
+   * If project is given the edit 
+   * window will show up.
+   */
+  NewEditDialog(Gtk::Window &parent, Project *proj = 0);
+  virtual ~NewEditDialog();
 
- protected:
-  Glib::RefPtr<Gtk::UIManager> refUIManager;
-  Glib::RefPtr<Gtk::ActionGroup> refActionGroup;
-  Gtk::ScrolledWindow scrollview;
-  Glib::RefPtr<Gtk::ListStore> ref_tree_model;
-  Gtk::TreeModelColumn<std::string> *test_c;
-
-  // Creates the menu, use to initialize.
-  void create_menu(Gtk::VBox *vbox);
-
-  void add_new_project(Project p);
-
-  //Signal handlers:
-  void on_action_file_open();
-  void on_action_file_delete();
-  void on_action_file_exit();
-  void on_action_file_new();
-  void on_action_file_export();
-  void on_action_file_import();
-  void on_action_help_help();
-  void on_action_help_about();
+ private:
+  void show_calendar(bool start_date_cal = true);
+  void on_click_start_calendar();
+  void on_click_end_calendar();
+  Gtk::Entry number_entry, name_entry, leader_name_entry, leader_surname_entry, 
+    leader_initials_entry, start_date_entry, end_date_entry,
+    hour_per_day_entry, days_per_week_entry;
+  Gtk::TextView desc_view;
 };
+
 #endif
