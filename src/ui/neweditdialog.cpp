@@ -37,7 +37,8 @@
 #include <glibmm/ustring.h>
 
 
-NewEditDialog::NewEditDialog(Gtk::Window &parent, Project *proj)
+NewEditDialog::NewEditDialog(MainWindow *parent, Project *proj)
+  : parent_window(parent)
 {
   if(proj)
   {
@@ -50,7 +51,7 @@ NewEditDialog::NewEditDialog(Gtk::Window &parent, Project *proj)
     set_title(_("New project"));
   }
   set_icon_from_file("images/HaPr_high_80x100_ver2.gif");
-  set_transient_for(parent);
+  set_transient_for(*parent);
 
   add_button(Gtk::Stock::CANCEL, 2);
   add_button(_("Create project"), Gtk::RESPONSE_OK);
@@ -180,6 +181,7 @@ NewEditDialog::NewEditDialog(Gtk::Window &parent, Project *proj)
       if(end_date_entry.get_text().size() > 0)
 	newp.set_end_date(end_date_entry.get_text());
       save_object_to_db(&newp);
+      parent_window->add_new_project(newp);
       break;
     }
   }

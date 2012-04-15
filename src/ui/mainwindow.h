@@ -35,17 +35,27 @@ class MainWindow : public Gtk::Window
   MainWindow();
   virtual ~MainWindow();
 
+  void add_new_project(Project p);
+
  protected:
   Glib::RefPtr<Gtk::UIManager> refUIManager;
   Glib::RefPtr<Gtk::ActionGroup> refActionGroup;
   Gtk::ScrolledWindow scrollview;
+  Gtk::TreeView *treeview;
   Glib::RefPtr<Gtk::ListStore> ref_tree_model;
-  Gtk::TreeModelColumn<std::string> *test_c;
+  Gtk::TreeModelColumn<time_t> *col_id;
+  Gtk::TreeModelColumn<std::string> *col_no;
+  Gtk::TreeModelColumn<std::string> *col_name;
+  Gtk::TreeModelColumn<std::string> *col_desc;
+  Gtk::TreeModelColumn<std::string> *col_leader_name;
+  Gtk::TreeModelColumn<std::string> *col_leader_surname;
+  Gtk::TreeModelColumn<std::string> *col_start_date;
+  Gtk::TreeModelColumn<std::string> *col_end_date;
+  Gtk::Label *active_label, *late_label, *history_label;
+  int no_active, no_late;
 
   // Creates the menu, use to initialize.
   void create_menu(Gtk::VBox *vbox);
-
-  void add_new_project(Project p);
 
   //Signal handlers:
   void on_action_file_open();

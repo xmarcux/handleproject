@@ -39,7 +39,7 @@ ui/mainwindow.o : files.h project/project.h ui/neweditdialog.h ui/about.h ui/pro
 ui/about.o: ui/about.h ui/about.cpp
 	$(CC) $(CFLAGS) ui/about.cpp -o ui/about.o $(GTKFLAGS)
 
-ui/neweditdialog.o : files.h project/project.h ui/neweditdialog.h ui/neweditdialog.cpp
+ui/neweditdialog.o : ui/mainwindow.h files.h project/project.h ui/neweditdialog.h ui/neweditdialog.cpp
 	$(CC) $(CFLAGS) ui/neweditdialog.cpp -o ui/neweditdialog.o $(GTKFLAGS)
 
 ui/projectwindow.o : project/project.h ui/projectwindow.h ui/projectwindow.cpp

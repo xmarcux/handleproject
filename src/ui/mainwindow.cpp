@@ -23,6 +23,8 @@
 #include "neweditdialog.h"
 #include "projectwindow.h"
 #include "../files.h"
+#include "../project/project.h"
+#include "../project/activity.h"
 #include <list>
 #include <sstream>
 #include <glibmm/i18n.h>
@@ -41,12 +43,13 @@ MainWindow::MainWindow()
   std::list<Project> active_projects = get_projects_from_db();
   Glib::ustring str_no_proj, str_late_proj, str_history_proj;
   std::stringstream ss, ss2, ss3;
-  ss << active_projects.size();
+  no_active = active_projects.size();
+  ss << no_active;
   ss >> str_no_proj;
   std::list<Project> hist_projects = get_projects_from_db(HISTORY_PROJECT);
   ss3 << hist_projects.size();
   ss3 >> str_history_proj;
-  int no_late = 0;
+  no_late = 0;
   for(std::list<Project>::iterator it = active_projects.begin(); it != active_projects.end(); it++)
   {
     if(it->is_late())
@@ -55,7 +58,7 @@ MainWindow::MainWindow()
   ss2 << no_late;
   ss2 >> str_late_proj;
   
-  Gtk::TreeView *treeview = new Gtk::TreeView();
+  treeview = new Gtk::TreeView();
   Gtk::manage(treeview);
   scrollview.add(*treeview);
   scrollview.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
@@ -73,14 +76,14 @@ MainWindow::MainWindow()
 
   //Table for active projects.
   Gtk::TreeModel::ColumnRecord *col_record = new Gtk::TreeModel::ColumnRecord();
-  Gtk::TreeModelColumn<time_t> *col_id = new Gtk::TreeModelColumn<time_t>();
-  Gtk::TreeModelColumn<std::string> *col_no = new Gtk::TreeModelColumn<std::string>();
-  Gtk::TreeModelColumn<std::string> *col_name = new Gtk::TreeModelColumn<std::string>();
-  Gtk::TreeModelColumn<std::string> *col_desc = new Gtk::TreeModelColumn<std::string>();
-  Gtk::TreeModelColumn<std::string> *col_leader_name = new Gtk::TreeModelColumn<std::string>();
-  Gtk::TreeModelColumn<std::string> *col_leader_surname = new Gtk::TreeModelColumn<std::string>();
-  Gtk::TreeModelColumn<std::string> *col_start_date = new Gtk::TreeModelColumn<std::string>();
-  Gtk::TreeModelColumn<std::string> *col_end_date = new Gtk::TreeModelColumn<std::string>();
+  col_id = new Gtk::TreeModelColumn<time_t>();
+  col_no = new Gtk::TreeModelColumn<std::string>();
+  col_name = new Gtk::TreeModelColumn<std::string>();
+  col_desc = new Gtk::TreeModelColumn<std::string>();
+  col_leader_name = new Gtk::TreeModelColumn<std::string>();
+  col_leader_surname = new Gtk::TreeModelColumn<std::string>();
+  col_start_date = new Gtk::TreeModelColumn<std::string>();
+  col_end_date = new Gtk::TreeModelColumn<std::string>();
 
   col_record->add(*col_id);
   col_record->add(*col_no);
@@ -91,7 +94,6 @@ MainWindow::MainWindow()
   col_record->add(*col_start_date);
   col_record->add(*col_end_date);
 
-  //  Glib::RefPtr<Gtk::ListStore> ref_tree_model = Gtk::ListStore::create(*col_record);
   ref_tree_model = Gtk::ListStore::create(*col_record);
   treeview->set_model(ref_tree_model);
 
@@ -185,9 +187,9 @@ MainWindow::MainWindow()
 
   Gtk::HBox *const status_box = new Gtk::HBox(false, 0);
   Gtk::manage(status_box);
-  Gtk::Label *active_label = new Gtk::Label(_("Number of active projects: ") +  str_no_proj);
-  Gtk::Label *late_label = new Gtk::Label(_("Number of late projects: ") + str_late_proj);
-  Gtk::Label *history_label = new Gtk::Label(_("Number of projects in history: ") + str_history_proj);
+  active_label = new Gtk::Label(_("Number of active projects: ") +  str_no_proj);
+  late_label = new Gtk::Label(_("Number of late projects: ") + str_late_proj);
+  history_label = new Gtk::Label(_("Number of projects in history: ") + str_history_proj);
   Gtk::manage(active_label);
   Gtk::manage(late_label);
   Gtk::manage(history_label);
@@ -196,11 +198,6 @@ MainWindow::MainWindow()
   status_box->pack_start(*late_label);
   status_box->pack_start(*history_label);
 
-  /*  Gtk::Statusbar *statusbar = new Gtk::Statusbar();
-  Gtk::manage(statusbar);
-  statusbar->push(_("Number of active projects: ") +  str_no_proj + "               " +
-		  _("Number of late projects: ") + str_late_proj + "               " + 
-		  _("Number of projects in history: ") + str_history_proj);*/
   main_box->pack_start(*status_box, Gtk::PACK_SHRINK);
   show_all_children();
 }
@@ -286,7 +283,7 @@ void MainWindow::create_menu(Gtk::VBox *vbox)
 
 void MainWindow::add_new_project(Project p)
 {
-  /*  Gtk::TreeModel::Row row;
+  Gtk::TreeModel::Row row;
   row = *(ref_tree_model->append());
   row[*col_id] = p.get_id();
   row[*col_no] = p.get_project_no();
@@ -296,7 +293,25 @@ void MainWindow::add_new_project(Project p)
   row[*col_leader_surname] = p.get_project_leader_surname();
   row[*col_start_date] = p.get_start_date_str_eu();
   row[*col_end_date] = p.get_end_date_str_eu();
-  */
+
+  no_active++;
+  std::string str_active;
+  std::stringstream ss;
+  ss << no_active;
+  ss >> str_active;
+  if(!ss.fail())
+    active_label->set_text(_("Number of active projects: ") + str_active);
+
+  if(p.is_late())
+  {
+    no_late++;
+    std::string str_late;
+    std::stringstream ss2;
+    ss2 << no_late;
+    ss2 >> str_late;
+    if(!ss2.fail())
+      late_label->set_text(_("Number of late projects: ") + str_late);
+  }
 }
 
 void MainWindow::on_action_file_open()
@@ -306,7 +321,95 @@ void MainWindow::on_action_file_open()
 
 void MainWindow::on_action_file_delete()
 {
-
+  Glib::RefPtr<Gtk::TreeSelection> ref_tree_selection = treeview->get_selection();
+  Gtk::TreeModel::iterator iter = ref_tree_selection->get_selected();
+  if(iter)
+  {
+    Gtk::TreeModel::Row row = *iter;
+    Glib::ustring msg =  row.get_value(*col_no);
+    msg += "\n" + row.get_value(*col_name);
+    msg += "\n" + row.get_value(*col_desc);
+    Gtk::MessageDialog delete_dialog(*this, "", false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
+    delete_dialog.set_message(_("Do you want to delete project?"));
+    delete_dialog.set_secondary_text(msg);
+    int response = delete_dialog.run();
+    if(response == Gtk::RESPONSE_YES)
+    {
+      delete_dialog.hide();
+      time_t proj_no;
+      std::stringstream ss;
+      ss << row.get_value(*col_id);
+      ss >> proj_no;
+      if(!ss.fail())
+      {
+	bool del_ok = true;
+	Project p = get_project_from_db(proj_no);
+	std::list<Activity> act_list = p.get_activities();
+	for(std::list<Activity>::iterator it=act_list.begin(); it!=act_list.end(); it++)
+	{
+	  if(delete_activity_from_db(&(*it), proj_no) <= 0)
+	  {
+	    std::stringstream ss, ss2;
+	    ss << p.get_id();
+	    ss2 << it->get_id();
+	    del_ok = false;
+	    new_error("Error: Can not delete activity with id: " + ss2.str() +
+		      " in project with id: " + ss.str(), 
+		      "mainwindow.cpp", "void MainWindow::on_action_file_delete()");
+	  }
+	}
+        if(del_ok)
+	{
+	  if(delete_object_from_db(&p) <= 0)
+	  {
+	    std::stringstream ss;
+	    ss << p.get_id();
+	    new_error("Error: Can not delete project with id: " + ss.str(), 
+		      "mainwindow.cpp", "void MainWindow::on_action_file_delete()");
+	    Gtk::MessageDialog error_dialog(*this, "", false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+	    error_dialog.set_message(_("Error: Can not delete project:"));
+	    error_dialog.set_secondary_text(msg);
+	    error_dialog.run();
+	  }
+	  else
+	  {
+	    ref_tree_model->erase(iter);
+	    no_active--;
+	    if(p.is_late())
+	      no_late--;
+	    std::string no_act_str, no_late_str;
+	    std::stringstream s_act, s_late;
+	    s_act << no_active;
+	    s_act >> no_act_str;
+	    s_late << no_late;
+	    s_late >> no_late_str;
+	    active_label->set_text(_("Number of active projects: ") + no_act_str);
+	    late_label->set_text(_("Number of late projects: ") + no_late_str);
+	    Gtk::MessageDialog confirm_dialog(*this, "", false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_OK, true);
+	    confirm_dialog.set_message(_("Project deleted: "));
+	    confirm_dialog.set_secondary_text(msg);
+	    confirm_dialog.run();
+	  }
+	}
+	else
+	{
+	  Gtk::MessageDialog error_dialog(*this, "", false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+	  error_dialog.set_message(_("Error: Can not delete project:"));
+	  error_dialog.set_secondary_text(msg);
+	  error_dialog.run();
+	}
+      }
+      else
+      {
+	Gtk::MessageDialog error_dialog(*this, "", false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+	error_dialog.set_message(_("Error: Can not delete project:"));
+	error_dialog.set_secondary_text(msg);
+	error_dialog.run();
+	new_error("Error: Can not delete project with id: " + row.get_value(*col_id),
+		  "mainwindow.cpp", "void MainWindow::on_action_file_delete()");
+      }
+    }
+  }
 }
 
 void MainWindow::on_action_file_exit()
@@ -316,7 +419,7 @@ void MainWindow::on_action_file_exit()
 
 void MainWindow::on_action_file_new()
 {
-  NewEditDialog d(*this);
+  NewEditDialog d(this);
 }
 
 void MainWindow::on_action_file_export()
@@ -336,11 +439,8 @@ void MainWindow::on_action_help_help()
 
 void MainWindow::on_action_help_about()
 {
-  //  About a;
-  //  a.run();
-  //test
-  ProjectWindow *pw = new ProjectWindow();
-  pw->show();
+  About a;
+  a.run();
 }
 
 MainWindow::~MainWindow()

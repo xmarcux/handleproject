@@ -26,6 +26,7 @@
 #include <gtkmm/entry.h>
 #include <gtkmm/textview.h>
 #include "../project/project.h"
+#include "mainwindow.h"
 
 class NewEditDialog : public Gtk::Dialog
 {
@@ -36,7 +37,7 @@ class NewEditDialog : public Gtk::Dialog
    * If project is given the edit 
    * window will show up.
    */
-  NewEditDialog(Gtk::Window &parent, Project *proj = 0);
+  NewEditDialog(MainWindow *parent, Project *proj = 0);
   virtual ~NewEditDialog();
 
  private:
@@ -47,6 +48,7 @@ class NewEditDialog : public Gtk::Dialog
     leader_initials_entry, start_date_entry, end_date_entry,
     hour_per_day_entry, days_per_week_entry;
   Gtk::TextView desc_view;
+  MainWindow *parent_window;
 };
 
 #endif
