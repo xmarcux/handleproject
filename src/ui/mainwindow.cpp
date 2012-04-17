@@ -47,7 +47,8 @@ MainWindow::MainWindow()
   ss << no_active;
   ss >> str_no_proj;
   std::list<Project> hist_projects = get_projects_from_db(HISTORY_PROJECT);
-  ss3 << hist_projects.size();
+  no_history = hist_projects.size();
+  ss3 << no_history;
   ss3 >> str_history_proj;
   no_late = 0;
   for(std::list<Project>::iterator it = active_projects.begin(); it != active_projects.end(); it++)
@@ -62,13 +63,13 @@ MainWindow::MainWindow()
   Gtk::manage(treeview);
   scrollview.add(*treeview);
   scrollview.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
-  Gtk::TreeView *treeviewhist = new Gtk::TreeView();
+  treeviewhist = new Gtk::TreeView();
   Gtk::manage(treeviewhist);
   Gtk::ScrolledWindow *scrollhistory = new Gtk::ScrolledWindow();
   Gtk::manage(scrollhistory);
   scrollhistory->add(*treeviewhist);
   scrollhistory->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
-  Gtk::Notebook *tabview = new Gtk::Notebook();
+  tabview = new Gtk::Notebook();
   Gtk::manage(tabview);
   tabview->append_page(scrollview, _("_Active projects"), true);
   tabview->append_page(*scrollhistory, _("P_roject history"), true);
@@ -132,14 +133,14 @@ MainWindow::MainWindow()
 
   //Table for history.
   Gtk::TreeModel::ColumnRecord *col_record_hist = new Gtk::TreeModel::ColumnRecord();
-  Gtk::TreeModelColumn<time_t> *col_id_hist = new Gtk::TreeModelColumn<time_t>();
-  Gtk::TreeModelColumn<std::string> *col_no_hist = new Gtk::TreeModelColumn<std::string>();
-  Gtk::TreeModelColumn<std::string> *col_name_hist = new Gtk::TreeModelColumn<std::string>();
-  Gtk::TreeModelColumn<std::string> *col_desc_hist = new Gtk::TreeModelColumn<std::string>();
-  Gtk::TreeModelColumn<std::string> *col_leader_name_hist = new Gtk::TreeModelColumn<std::string>();
-  Gtk::TreeModelColumn<std::string> *col_leader_surname_hist = new Gtk::TreeModelColumn<std::string>();
-  Gtk::TreeModelColumn<std::string> *col_start_date_hist = new Gtk::TreeModelColumn<std::string>();
-  Gtk::TreeModelColumn<std::string> *col_end_date_hist = new Gtk::TreeModelColumn<std::string>();
+  col_id_hist = new Gtk::TreeModelColumn<time_t>();
+  col_no_hist = new Gtk::TreeModelColumn<std::string>();
+  col_desc_hist = new Gtk::TreeModelColumn<std::string>();
+  col_name_hist = new Gtk::TreeModelColumn<std::string>();
+  col_leader_name_hist = new Gtk::TreeModelColumn<std::string>();
+  col_leader_surname_hist = new Gtk::TreeModelColumn<std::string>();
+  col_start_date_hist = new Gtk::TreeModelColumn<std::string>();
+  col_end_date_hist = new Gtk::TreeModelColumn<std::string>();
 
   col_record_hist->add(*col_id_hist);
   col_record_hist->add(*col_no_hist);
@@ -150,7 +151,7 @@ MainWindow::MainWindow()
   col_record_hist->add(*col_start_date_hist);
   col_record_hist->add(*col_end_date_hist);
 
-  Glib::RefPtr<Gtk::ListStore> ref_tree_model_hist = Gtk::ListStore::create(*col_record_hist);
+  ref_tree_model_hist = Gtk::ListStore::create(*col_record_hist);
   treeviewhist->set_model(ref_tree_model_hist);
 
   Gtk::TreeModel::Row row_hist;
@@ -260,6 +261,7 @@ void MainWindow::create_menu(Gtk::VBox *vbox)
     "  <toolbar name='ToolBar'>"
     "    <toolitem action='FileNew'/>"
     "    <toolitem action='FileOpen'/>"
+    "    <toolitem action='FileDelete'/>"
     "  </toolbar>"
     "</ui>";
 
@@ -321,14 +323,34 @@ void MainWindow::on_action_file_open()
 
 void MainWindow::on_action_file_delete()
 {
-  Glib::RefPtr<Gtk::TreeSelection> ref_tree_selection = treeview->get_selection();
-  Gtk::TreeModel::iterator iter = ref_tree_selection->get_selected();
+  Glib::RefPtr<Gtk::TreeSelection> ref_tree_selection;
+  Gtk::TreeModel::iterator iter;
+  if(tabview->get_current_page() == 0)
+  {
+    ref_tree_selection = treeview->get_selection();
+    iter = ref_tree_selection->get_selected();
+  }
+  else
+  {
+    ref_tree_selection = treeviewhist->get_selection();
+    iter = ref_tree_selection->get_selected();
+  }
   if(iter)
   {
     Gtk::TreeModel::Row row = *iter;
-    Glib::ustring msg =  row.get_value(*col_no);
-    msg += "\n" + row.get_value(*col_name);
-    msg += "\n" + row.get_value(*col_desc);
+    Glib::ustring msg;
+    if(tabview->get_current_page() == 0)
+    {
+      msg =  row.get_value(*col_no);
+      msg += "\n" + row.get_value(*col_name);
+      msg += "\n" + row.get_value(*col_desc);
+    }
+    else
+    {
+      msg =  row.get_value(*col_no_hist);
+      msg += "\n" + row.get_value(*col_name_hist);
+      msg += "\n" + row.get_value(*col_desc_hist);
+    }
     Gtk::MessageDialog delete_dialog(*this, "", false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
     delete_dialog.set_message(_("Do you want to delete project?"));
     delete_dialog.set_secondary_text(msg);
@@ -338,16 +360,28 @@ void MainWindow::on_action_file_delete()
       delete_dialog.hide();
       time_t proj_no;
       std::stringstream ss;
-      ss << row.get_value(*col_id);
+      if(tabview->get_current_page() == 0)
+	ss << row.get_value(*col_id);
+      else
+	ss << row.get_value(*col_id_hist);
       ss >> proj_no;
       if(!ss.fail())
       {
 	bool del_ok = true;
-	Project p = get_project_from_db(proj_no);
+	Project p("", "", "");
+	if(tabview->get_current_page() == 0)
+	  p = get_project_from_db(proj_no);
+	else
+	  p = get_project_from_db(proj_no, HISTORY_PROJECT);
 	std::list<Activity> act_list = p.get_activities();
 	for(std::list<Activity>::iterator it=act_list.begin(); it!=act_list.end(); it++)
 	{
-	  if(delete_activity_from_db(&(*it), proj_no) <= 0)
+	  int act_del;
+	  if(tabview->get_current_page() == 0)
+	    act_del = delete_activity_from_db(&(*it), proj_no);
+	  else
+	    act_del = delete_activity_from_db(&(*it), proj_no, HISTORY_PROJECT);
+	  if(act_del <= 0)
 	  {
 	    std::stringstream ss, ss2;
 	    ss << p.get_id();
@@ -360,7 +394,12 @@ void MainWindow::on_action_file_delete()
 	}
         if(del_ok)
 	{
-	  if(delete_object_from_db(&p) <= 0)
+	  int proj_del;
+	  if(tabview->get_current_page() == 0)
+	    proj_del = delete_object_from_db(&p);
+	  else
+	    proj_del = delete_object_from_db(&p, HISTORY_PROJECT);
+	  if(proj_del <= 0)
 	  {
 	    std::stringstream ss;
 	    ss << p.get_id();
@@ -373,18 +412,31 @@ void MainWindow::on_action_file_delete()
 	  }
 	  else
 	  {
-	    ref_tree_model->erase(iter);
-	    no_active--;
-	    if(p.is_late())
-	      no_late--;
-	    std::string no_act_str, no_late_str;
-	    std::stringstream s_act, s_late;
-	    s_act << no_active;
-	    s_act >> no_act_str;
-	    s_late << no_late;
-	    s_late >> no_late_str;
-	    active_label->set_text(_("Number of active projects: ") + no_act_str);
-	    late_label->set_text(_("Number of late projects: ") + no_late_str);
+	    if(tabview->get_current_page() == 0)
+	    {
+	      ref_tree_model->erase(iter);
+	      no_active--;
+	      if(p.is_late())
+		no_late--;
+	      std::string no_act_str, no_late_str;
+	      std::stringstream s_act, s_late;
+	      s_act << no_active;
+	      s_act >> no_act_str;
+	      s_late << no_late;
+	      s_late >> no_late_str;
+	      active_label->set_text(_("Number of active projects: ") + no_act_str);
+	      late_label->set_text(_("Number of late projects: ") + no_late_str);
+	    }
+	    else
+	    {
+	      ref_tree_model_hist->erase(iter);
+	      no_history--;
+	      std::string no_hist_str;
+	      std::stringstream s_hist;
+	      s_hist << no_history;
+	      s_hist >> no_hist_str;
+	      history_label->set_text(_("Number of projects in history: ") + no_hist_str);
+     	    }
 	    Gtk::MessageDialog confirm_dialog(*this, "", false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_OK, true);
 	    confirm_dialog.set_message(_("Project deleted: "));
 	    confirm_dialog.set_secondary_text(msg);

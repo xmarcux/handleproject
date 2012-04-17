@@ -357,7 +357,12 @@ Project get_project_from_db(size_t project_no, project_state state)
     filestream.read(buffer, length);
     filestream.close();
     proj = Project(string(buffer));
-    proj.set_activities(get_activities_from_db(project_no), false);
+    list<Activity> act_list;
+    if(state == ACTIVE_PROJECT)
+      act_list = get_activities_from_db(project_no);
+    else
+      act_list = get_activities_from_db(project_no, HISTORY_PROJECT);
+    proj.set_activities(act_list, false);
   }
   return proj;
 }

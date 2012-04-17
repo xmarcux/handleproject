@@ -41,6 +41,8 @@ class MainWindow : public Gtk::Window
   Glib::RefPtr<Gtk::UIManager> refUIManager;
   Glib::RefPtr<Gtk::ActionGroup> refActionGroup;
   Gtk::ScrolledWindow scrollview;
+
+  //Table for active projects
   Gtk::TreeView *treeview;
   Glib::RefPtr<Gtk::ListStore> ref_tree_model;
   Gtk::TreeModelColumn<time_t> *col_id;
@@ -51,8 +53,23 @@ class MainWindow : public Gtk::Window
   Gtk::TreeModelColumn<std::string> *col_leader_surname;
   Gtk::TreeModelColumn<std::string> *col_start_date;
   Gtk::TreeModelColumn<std::string> *col_end_date;
+
+  //Table for project history
+  Gtk::TreeView *treeviewhist;
+  Glib::RefPtr<Gtk::ListStore> ref_tree_model_hist;
+  Gtk::TreeModelColumn<time_t> *col_id_hist;
+  Gtk::TreeModelColumn<std::string> *col_no_hist;
+  Gtk::TreeModelColumn<std::string> *col_name_hist;
+  Gtk::TreeModelColumn<std::string> *col_desc_hist;
+  Gtk::TreeModelColumn<std::string> *col_leader_name_hist;
+  Gtk::TreeModelColumn<std::string> *col_leader_surname_hist;
+  Gtk::TreeModelColumn<std::string> *col_start_date_hist;
+  Gtk::TreeModelColumn<std::string> *col_end_date_hist;
+
+  Gtk::Notebook *tabview;
+
   Gtk::Label *active_label, *late_label, *history_label;
-  int no_active, no_late;
+  int no_active, no_late, no_history;
 
   // Creates the menu, use to initialize.
   void create_menu(Gtk::VBox *vbox);
