@@ -21,6 +21,7 @@
 
 #include "files.h"
 
+#include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <dirent.h>
@@ -471,4 +472,27 @@ int move_project_to_history(Project *proj, project_state state)
   }
 
   return 1;
+}
+
+int export_project_from_db(Project p, string export_path, project_state state)
+{
+  stringstream p_ss;
+  p_ss << p.get_id();
+  string proj_files = string(projpath) + "/" + p_ss.str() + ".project"; 
+  list<Activity> act_list = p.get_activities();
+  for(list<Activity>::iterator it = act_list.begin(); it != act_list.end(); it++)
+  {
+    stringstream a_ss;
+    a_ss << it->get_id();
+    proj_files += " " + string(projpath) + "/" + a_ss.str() + "_" + p_ss.str() + ".activity";
+  }
+  if(system(("tar -cf " + export_path + " " + proj_files).c_str()) != -1)
+  {
+    if(system(("gzip " + export_path).c_str()) != -1)
+      return 1;
+    else
+      return -1;
+  }
+
+  return -1;
 }

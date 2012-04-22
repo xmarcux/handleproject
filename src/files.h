@@ -120,5 +120,16 @@ std::list<Project> get_projects_from_db(project_state state = ACTIVE_PROJECT);
  */
 int move_project_to_history(Project *proj, project_state state = ACTIVE_PROJECT);
 
+/* Function exports specified project
+ * with all activities to path given
+ * in export_path. 
+ * export_path should specify
+ * the complete path including file name.
+ * Project will be packed with tar
+ * and zipped with gzip.
+ * Returns 1 on success and -1 on failure.
+ */
+int export_project_from_db(Project p, std::string export_path, project_state state = ACTIVE_PROJECT);
+
 #endif
 

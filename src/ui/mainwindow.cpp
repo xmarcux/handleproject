@@ -476,7 +476,80 @@ void MainWindow::on_action_file_new()
 
 void MainWindow::on_action_file_export()
 {
+  Glib::RefPtr<Gtk::TreeSelection> ref_tree_selection;
+  Gtk::TreeModel::iterator iter;
+  if(tabview->get_current_page() == 0)
+  {
+    ref_tree_selection = treeview->get_selection();
+    iter = ref_tree_selection->get_selected();
+  }
+  else
+  {
+    ref_tree_selection = treeviewhist->get_selection();
+    iter = ref_tree_selection->get_selected();
+  }
+  if(iter)
+  {
+    Gtk::TreeModel::Row row = *iter;
+    time_t proj_id;
+    Project export_p("", "", "");
+    std::stringstream s_proj_id;
+    if(tabview->get_current_page() == 0)
+    {
+      proj_id = row.get_value(*col_id);
+      export_p = get_project_from_db(proj_id);
+    }
+    else
+    {
+      proj_id = row.get_value(*col_id_hist);
+      export_p = get_project_from_db(proj_id, HISTORY_PROJECT);
+    }
+    s_proj_id << proj_id;
 
+    Gtk::FileChooserDialog export_dialog(*this, _("Export project"), Gtk::FILE_CHOOSER_ACTION_SAVE);
+    export_dialog.add_button(Gtk::Stock::CANCEL, 1);
+    export_dialog.add_button(Gtk::Stock::SAVE, 2);
+    bool cont = true;
+    while(cont)
+    {
+      int response = export_dialog.run();
+      if(response == 2)
+      {
+	Glib::ustring file_name = export_dialog.get_filename();
+	if(file_name.size() == 0)
+	{
+	  Gtk::MessageDialog no_file_dialog(*this, "", false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK, true);
+	  no_file_dialog.set_message(_("Please specify a name for the export"));
+	  no_file_dialog.run();
+	}
+	else
+	{
+	  file_name += "_" + s_proj_id.str() + ".tar";
+	  if(export_project_from_db(export_p, file_name) == 1)
+	  {
+	    file_name = _("Project exported to file: \n") + file_name + ".gz";
+	    file_name = _("Project number: ") + export_p.get_project_no() + "\n" +
+	      _("Project name: ") + export_p.get_project_name() + "\n" +
+	      _("Project description: ") + export_p.get_description() + "\n\n" + 
+	      file_name;
+	    Gtk::MessageDialog response_dialog(*this, "", false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_OK, true);
+	    response_dialog.set_message(_("Project exported:"));
+	    response_dialog.set_secondary_text(file_name);
+	    response_dialog.run();
+	    cont = false;
+	  }
+	  else
+	  {
+	    Gtk::MessageDialog err_exp_dialog(*this, "", false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+	    err_exp_dialog.set_message("Error!");
+	    err_exp_dialog.set_secondary_text("Can not export project!");
+	  }
+	}
+      }
+      else
+	cont = false;
+    }
+  }
 }
 
 void MainWindow::on_action_file_import()
