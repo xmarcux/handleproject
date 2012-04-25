@@ -131,5 +131,20 @@ int move_project_to_history(Project *proj, project_state state = ACTIVE_PROJECT)
  */
 int export_project_from_db(Project p, std::string export_path, project_state state = ACTIVE_PROJECT);
 
+/* Function imports project to database.
+ * Function asume that project is exported
+ * with export function from HandleProject.
+ * Gunzip and tar is used and if project id
+ * is already used a new id i generated.
+ * Returns project on success and 0 on failure.
+ */
+Project * import_project_to_db(std::string file_path);
+
+/* Function returns true if a project
+ * with project number given as argument
+ * exists in database.
+ */
+bool project_exists_in_db(time_t proj_no);
+
 #endif
 

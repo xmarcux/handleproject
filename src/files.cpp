@@ -496,3 +496,140 @@ int export_project_from_db(Project p, string export_path, project_state state)
 
   return -1;
 }
+
+Project * import_project_to_db(string file_path)
+{
+  DIR *dp;
+  struct dirent *dirp;
+  const char *path = "haprdb/haprdb/projects";
+  fstream filestream;
+  Project *p;//("", "", "");
+  list<Activity> a_list;
+
+  if(system(("gunzip " + file_path).c_str()) != -1)
+  {
+    if(system(("tar -xf " + file_path.substr(0, file_path.size() - 3) + " -C haprdb").c_str()) != -1)
+    {
+      if((dp = opendir(path)) == NULL)
+      {
+	new_error("Could not open dir:" + string(path), "files.cpp", 
+		  "int import_project_to_db()");
+	return 0;
+      }
+      else
+      {
+	  while((dirp = readdir(dp)) != NULL)
+	  {
+	    if(strstr(dirp->d_name, ".project") != 0)
+	    {
+	      int length;
+	      char *buffer;
+	      string filepath = string(path) + "/" + string(dirp->d_name);
+	      filestream.open(filepath.c_str(), fstream::in);
+	      filestream.seekg(0, ios::end);
+	      length = filestream.tellg();
+	      filestream.seekg(0, ios::beg);
+	      buffer = new char[length];
+	      filestream.read(buffer, length);
+	      filestream.close();
+	      p = new Project(string(buffer));
+	      if(remove(filepath.c_str()) != 0)
+	      {
+		stringstream serr;
+		serr << errno;
+		new_error("Errorno: " + serr.str() + " ,Can not delete file: " + filepath, 
+			  "files.cpp", "int import_project_to_db(string file_path)");
+		return 0;
+	      }
+	    }
+	    else if(strcmp(".", dirp->d_name) != 0 && strcmp("..", dirp->d_name) != 0)
+	    {
+	      int length;
+	      char *buffer;
+	      string filepath = string(path) + "/" + string(dirp->d_name);
+	      filestream.open(filepath.c_str(), fstream::in);
+	      filestream.seekg(0, ios::end);
+	      length = filestream.tellg();
+	      filestream.seekg(0, ios::beg);
+	      buffer = new char[length];
+	      filestream.read(buffer, length);
+	      filestream.close();
+	      a_list.push_back(Activity(string(buffer)));
+	      if(remove(filepath.c_str()) != 0)
+	      {
+		stringstream serr;
+		serr << errno;
+		new_error("Errorno: " + serr.str() + " ,Can not delete file: " + filepath, 
+			  "files.cpp", "int import_project_to_db(string file_path)");
+		return 0;
+	      }
+	    }
+	  }
+	  closedir(dp);
+	  if(!project_exists_in_db(p->get_id()))
+	  {
+	    save_object_to_db(p);
+	    for(list<Activity>::iterator it = a_list.begin(); it != a_list.end(); it++)
+	    {
+	      save_activity_to_db(&(*it), p->get_id());
+	    }
+	  }
+	  else
+	  {
+	    while(project_exists_in_db(p->generate_new_id())){}
+	    save_object_to_db(p);
+	    for(list<Activity>::iterator it = a_list.begin(); it != a_list.end(); it++)
+	    {
+	      save_activity_to_db(&(*it), p->get_id());
+	    }
+	  }
+	  if(remove((file_path.substr(0, file_path.size() - 3)).c_str()) != 0)
+	  {
+	    stringstream serr;
+	    serr << errno;
+	    new_error("Errorno: " + serr.str() + " ,Can not delete file: " + file_path.substr(0, file_path.size() - 3), 
+		      "files.cpp", "int import_project_to_db(string file_path)");
+	    return 0;
+	  }
+	  if(remove("haprdb/haprdb/projects") != 0)
+	  {
+	    stringstream serr;
+	    serr << errno;
+	    new_error("Errorno: " + serr.str() + " ,Can not delete dir: haprdb/haprdb/projects" , 
+		      "files.cpp", "int import_project_to_db(string file_path)");
+	    return 0;
+	  }
+	  if(remove("haprdb/haprdb") != 0)
+	  {
+	    stringstream serr;
+	    serr << errno;
+	    new_error("Errorno: " + serr.str() + " ,Can not delete dir: haprdb/haprdb" , 
+		      "files.cpp", "int import_project_to_db(string file_path)");
+	    return 0;
+	  }
+      }
+      return p;
+    }
+    else
+      return 0;
+  }
+  else
+    return 0;
+}
+
+bool project_exists_in_db(time_t proj_no)
+{
+  stringstream ss;
+  fstream filestream;
+  bool exists = false;
+
+  ss << proj_no;
+  filestream.open((string(projpath) + "/" + ss.str() + ".project").c_str(),
+		  fstream::in);
+  if(filestream.is_open())
+  {
+    exists = true;
+  }
+  filestream.close();
+  return exists;
+}

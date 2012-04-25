@@ -543,6 +543,7 @@ void MainWindow::on_action_file_export()
 	    Gtk::MessageDialog err_exp_dialog(*this, "", false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
 	    err_exp_dialog.set_message("Error!");
 	    err_exp_dialog.set_secondary_text("Can not export project!");
+	    err_exp_dialog.run();
 	  }
 	}
       }
@@ -554,7 +555,42 @@ void MainWindow::on_action_file_export()
 
 void MainWindow::on_action_file_import()
 {
-
+  bool cont = true;
+  Glib::ustring file_path = "";
+  Gtk::FileChooserDialog import_dialog(*this, _("Import project"));
+  import_dialog.add_button(Gtk::Stock::CANCEL, 1);
+  import_dialog.add_button(_("Import"), 2);
+  while(cont)
+  {
+    int response = import_dialog.run();
+    file_path = import_dialog.get_filename();
+    if(response == 2)
+    {
+      if(file_path.size() == 0)
+      {
+	Gtk::MessageDialog no_path(*this, _("Choose project to import"), false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_OK, true);
+	no_path.run();
+      }
+      else
+      {
+	Project *p = import_project_to_db(file_path);
+	if(p != 0)//== 1)
+	{
+	  Gtk::MessageDialog import_done(*this, _("Project import finished"), false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_OK, true);
+	  import_done.run();
+	  this->add_new_project(*p);
+	}
+        else
+	{
+  	  Gtk::MessageDialog import_error(*this, _("Project import error\nIs file an exported project?"), false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+	  import_error.run();
+	}
+	cont = false;
+      }
+    }
+    else
+      cont = false;
+  }
 }
 
 void MainWindow::on_action_help_help()

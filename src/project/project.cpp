@@ -553,6 +553,14 @@ std::list<Activity> Project::get_activities() const
   return activities;
 }
 
+time_t Project::generate_new_id()
+{
+  time_t t;
+  time(&t);
+  project_id = t;
+  return project_id;
+}
+
 Activity Project::get_activity(time_t activity_id)
 {
   std::list<Activity>::iterator it;

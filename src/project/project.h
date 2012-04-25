@@ -132,6 +132,14 @@ class Project : public Saveobj, public Date
   int get_total_working_hours() const;
   std::list<Activity> get_activities() const;
 
+  /* Generates and sets a new id
+   * for project.
+   * Use when another project
+   * has the same id.
+   * New id is returned.
+   */
+  time_t generate_new_id();
+
   /* Returns Activity with specified id number.
    * If Activity is not found a new activity
    * is returned with a different id.
