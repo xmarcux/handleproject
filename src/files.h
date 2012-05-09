@@ -101,6 +101,9 @@ std::list<Staff> get_staff_from_db();
 /* Function takes project id as an argument.
  * The complete project is read from file
  * including activities and is returned.
+ * If project does not exist in database
+ * a project with id set to 0 (zero)
+ * will be returned.
  */
 Project get_project_from_db(size_t project_no, project_state state = ACTIVE_PROJECT);
 

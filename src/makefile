@@ -42,7 +42,7 @@ ui/about.o: ui/about.h ui/about.cpp
 ui/neweditdialog.o : ui/mainwindow.h files.h project/project.h ui/neweditdialog.h ui/neweditdialog.cpp
 	$(CC) $(CFLAGS) ui/neweditdialog.cpp -o ui/neweditdialog.o $(GTKFLAGS)
 
-ui/projectwindow.o : project/project.h ui/projectwindow.h ui/projectwindow.cpp
+ui/projectwindow.o : files.h project/project.h ui/projectwindow.h ui/about.h ui/projectwindow.cpp
 	$(CC) $(CFLAGS) ui/projectwindow.cpp -o ui/projectwindow.o $(GTKFLAGS)
 
 ui/splashwindow.o : ui/splashwindow.h ui/splashwindow.cpp

@@ -318,7 +318,31 @@ void MainWindow::add_new_project(Project p)
 
 void MainWindow::on_action_file_open()
 {
+  time_t p_id = 0;
+  Glib::RefPtr<Gtk::TreeSelection> ref_tree_selection;
+  Gtk::TreeModel::iterator iter;
+  if(tabview->get_current_page() == 0)
+  {
+    ref_tree_selection = treeview->get_selection();
+    iter = ref_tree_selection->get_selected();
+  }
+  else
+  {
+    ref_tree_selection = treeviewhist->get_selection();
+    iter = ref_tree_selection->get_selected();
+  }
 
+  if(iter)
+  {
+    Gtk::TreeModel::Row row = *iter;
+    if(tabview->get_current_page() == 0)
+      p_id = row.get_value(*col_id);
+    else
+      p_id = row.get_value(*col_id_hist);
+
+    ProjectWindow *pwindow = new ProjectWindow(p_id);
+    pwindow->show_all();
+  }
 }
 
 void MainWindow::on_action_file_delete()

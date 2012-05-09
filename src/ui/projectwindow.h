@@ -23,6 +23,10 @@
 
 #include "../project/project.h"
 #include <gtkmm/window.h>
+#include <gtkmm/actiongroup.h>
+#include <gtkmm/uimanager.h>
+#include <gtkmm/box.h>
+#include <glibmm/refptr.h>
 
 //#include <gtkmm/treemodelcolumn.h>
 
@@ -35,12 +39,28 @@
 class ProjectWindow : public Gtk::Window
 {
  public:
-  ProjectWindow();
-  //  ProjectWindow(Project p);
+  /* Constructor that takes the
+   * project id as an argument.
+   * Project is loded from file.
+   */
+  ProjectWindow(time_t project_id);
   virtual ~ProjectWindow();
 
  private:
-  //Gtk::TreeModelColumn<std::string> *test_c;
+  Project project;
+  Glib::RefPtr<Gtk::ActionGroup> refActionGroup;
+  Glib::RefPtr<Gtk::UIManager> refUIManager;
+  Gtk::VBox *const main_box;
+  /* Private method that
+   * creates the menu.
+   */
+  void create_menu();
+
+  /* Callback method for
+   * menues.
+   */
+  void on_action_file_exit();
+  void on_action_help_about();
 };
 
 #endif

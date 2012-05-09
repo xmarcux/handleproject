@@ -337,6 +337,7 @@ list<Staff> get_staff_from_db()
 Project get_project_from_db(size_t project_no, project_state state)
 {
   Project proj("");
+  proj.set_project_id(0);
   fstream filestream;
   int length;
   char *buffer;
