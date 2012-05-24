@@ -21,11 +21,12 @@
 #include "projectwindow.h"
 #include "../files.h"
 #include "about.h"
+#include "neweditdialog.h"
 #include <glibmm/i18n.h>
 #include <gtkmm/stock.h>
 
-ProjectWindow::ProjectWindow(time_t project_id)
-  : project("", "", ""), main_box(new Gtk::VBox(false, 0))
+ProjectWindow::ProjectWindow(time_t project_id, MainWindow *mainwindow)
+  : project("", "", ""), mainwindow(mainwindow), main_box(new Gtk::VBox(false, 0))
 {
   project = get_project_from_db(project_id);
   set_title("Handle Project\t" + (_("Project number: ") + project.get_project_no()) +
@@ -39,6 +40,12 @@ ProjectWindow::ProjectWindow(time_t project_id)
   set_default_size(500, 300);
   set_position(Gtk::WIN_POS_CENTER);
   maximize();
+}
+
+void ProjectWindow::update_view()
+{
+  set_title("Handle Project\t" + (_("Project number: ") + project.get_project_no()) +
+	    _("\tProject name: ") + project.get_project_name());
 }
 
 void ProjectWindow::create_menu()
@@ -58,7 +65,8 @@ void ProjectWindow::create_menu()
 
   // Project submenu
   refActionGroup->add(Gtk::Action::create("ProjectActivities", Gtk::Stock::EDIT, _("Edit _activities...")));
-  refActionGroup->add(Gtk::Action::create("ProjectProperties", Gtk::Stock::PROPERTIES, _("Pr_operties...")));
+  refActionGroup->add(Gtk::Action::create("ProjectProperties", Gtk::Stock::PROPERTIES, _("Pr_operties...")),
+		      sigc::mem_fun(*this, &ProjectWindow::on_action_project_properties));
 
   // Help menu
   refActionGroup->add(Gtk::Action::create("MenuHelp", _("_Help")));
@@ -116,6 +124,12 @@ void ProjectWindow::on_action_file_exit()
 {
   delete this;
 }
+
+void ProjectWindow::on_action_project_properties()
+{
+  NewEditDialog edit(mainwindow , this, &project);
+}
+
 void ProjectWindow::on_action_help_about()
 {
   About a;

@@ -35,7 +35,12 @@ class MainWindow : public Gtk::Window
   MainWindow();
   virtual ~MainWindow();
 
+  /* Adds a new project to the view */
   void add_new_project(Project p);
+
+  /* Updates the view when a project
+   * has been changed. */
+  void update_project_view(Project *p);
 
  protected:
   Glib::RefPtr<Gtk::UIManager> refUIManager;

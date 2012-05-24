@@ -22,6 +22,7 @@
 #define PROJECTWINDOW_H
 
 #include "../project/project.h"
+#include "mainwindow.h"
 #include <gtkmm/window.h>
 #include <gtkmm/actiongroup.h>
 #include <gtkmm/uimanager.h>
@@ -43,14 +44,21 @@ class ProjectWindow : public Gtk::Window
    * project id as an argument.
    * Project is loded from file.
    */
-  ProjectWindow(time_t project_id);
+  ProjectWindow(time_t project_id, MainWindow *mainwindow);
+
+  /* Updates the GUI if properites
+   * of project has been changed.
+   */
+  void update_view();
   virtual ~ProjectWindow();
 
  private:
   Project project;
+  MainWindow *mainwindow;
   Glib::RefPtr<Gtk::ActionGroup> refActionGroup;
   Glib::RefPtr<Gtk::UIManager> refUIManager;
   Gtk::VBox *const main_box;
+
   /* Private method that
    * creates the menu.
    */
@@ -61,6 +69,7 @@ class ProjectWindow : public Gtk::Window
    */
   void on_action_file_exit();
   void on_action_help_about();
+  void on_action_project_properties();
 };
 
 #endif

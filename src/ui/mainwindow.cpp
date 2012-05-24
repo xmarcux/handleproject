@@ -316,6 +316,26 @@ void MainWindow::add_new_project(Project p)
   }
 }
 
+void MainWindow::update_project_view(Project *p)
+{
+  //TODO
+  Gtk::TreeModel::Children iter = ref_tree_model->children();
+  for(Gtk::TreeModel::Children::iterator i = iter.begin(); i != iter.end(); i++)
+  {
+    Gtk::TreeModel::Row row = *i;
+    if(row[*col_id] == p->get_id())
+    {
+      row[*col_no] = p->get_project_no();
+      row[*col_name] = p->get_project_name();
+      row[*col_desc] = p->get_description();
+      row[*col_leader_name] = p->get_project_leader_name();
+      row[*col_leader_surname] = p->get_project_leader_surname();
+      row[*col_start_date] = p->get_start_date_str_eu();
+      row[*col_end_date] = p->get_end_date_str_eu();
+    }
+  }
+}
+
 void MainWindow::on_action_file_open()
 {
   time_t p_id = 0;
@@ -340,7 +360,7 @@ void MainWindow::on_action_file_open()
     else
       p_id = row.get_value(*col_id_hist);
 
-    ProjectWindow *pwindow = new ProjectWindow(p_id);
+    ProjectWindow *pwindow = new ProjectWindow(p_id, this);
     pwindow->show_all();
   }
 }

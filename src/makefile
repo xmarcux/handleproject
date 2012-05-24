@@ -39,10 +39,10 @@ ui/mainwindow.o : files.h project/project.h ui/neweditdialog.h ui/about.h ui/pro
 ui/about.o: ui/about.h ui/about.cpp
 	$(CC) $(CFLAGS) ui/about.cpp -o ui/about.o $(GTKFLAGS)
 
-ui/neweditdialog.o : ui/mainwindow.h files.h project/project.h ui/neweditdialog.h ui/neweditdialog.cpp
+ui/neweditdialog.o : ui/mainwindow.h ui/projectwindow.h files.h project/project.h ui/neweditdialog.h ui/neweditdialog.cpp
 	$(CC) $(CFLAGS) ui/neweditdialog.cpp -o ui/neweditdialog.o $(GTKFLAGS)
 
-ui/projectwindow.o : files.h project/project.h ui/projectwindow.h ui/about.h ui/projectwindow.cpp
+ui/projectwindow.o : files.h project/project.h ui/projectwindow.h ui/about.h ui/neweditdialog.h ui/mainwindow.h ui/projectwindow.cpp
 	$(CC) $(CFLAGS) ui/projectwindow.cpp -o ui/projectwindow.o $(GTKFLAGS)
 
 ui/splashwindow.o : ui/splashwindow.h ui/splashwindow.cpp

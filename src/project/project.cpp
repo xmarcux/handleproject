@@ -25,7 +25,6 @@
 #include <cctype>
 #include <sstream>
 
-
 Project::Project(time_t project_id, std::string project_no, std::string project_name,
 		 std::string description, std::string project_leader_name, 
 		 std::string project_leader_surname, std::string project_leader_initials,
@@ -318,8 +317,8 @@ Project::Project(std::string xmlstring)
 
   find1 = std::string::npos;
   find2 = std::string::npos;
-  find1 = xmlstring.find("<days_per_week>");
-  find2 = xmlstring.find("</days_per_week>");
+  find1 = xmlstring.rfind("<days_per_week>");
+  find2 = xmlstring.rfind("</days_per_week>");
   if(find1 != std::string::npos && find2 != std::string::npos)
   {
     std::stringstream ss;
