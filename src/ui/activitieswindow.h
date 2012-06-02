@@ -18,59 +18,66 @@
  *                                                                          *
  ****************************************************************************/
 
-#ifndef PROJECTWINDOW_H
-#define PROJECTWINDOW_H
+#ifndef ACTIVITIESWINDOW_H
+#define ACTIVITIESWINDOW_H
 
-#include "../project/project.h"
-#include "mainwindow.h"
 #include <gtkmm/window.h>
-#include <gtkmm/actiongroup.h>
 #include <gtkmm/uimanager.h>
+#include <gtkmm/actiongroup.h>
+#include <gtkmm/scrolledwindow.h>
+#include <gtkmm/liststore.h>
+#include <gtkmm/treeview.h>
+#include <gtkmm/treemodelcolumn.h>
+#include <gtkmm/label.h>
 #include <gtkmm/box.h>
 #include <glibmm/refptr.h>
+#include <string>
+#include "../project/project.h"
+#include "projectwindow.h"
 
-//#include <gtkmm/treemodelcolumn.h>
-
-/* This class is the window that
- * shows one specific project.
- * Window will show all activities,
- * information on project and
- * ways to be able to change project.
- */
-class ProjectWindow : public Gtk::Window
+class ActivitiesWindow : public Gtk::Window
 {
  public:
-  /* Constructor that takes the
-   * project id as an argument.
-   * Project is loded from file.
+  /* This window shows all the activities
+   * in a table where you are able to manage
+   * the activities for a specific project.
+   * Edit, delete and create new activities.
    */
-  ProjectWindow(time_t project_id, MainWindow *mainwindow);
-
-  /* Updates the GUI if properites
-   * of project has been changed.
-   */
-  void update_view();
-  virtual ~ProjectWindow();
+  ActivitiesWindow(Project *proj, ProjectWindow *parent);
 
  private:
-  Project project;
-  MainWindow *mainwindow;
-  Glib::RefPtr<Gtk::ActionGroup> refActionGroup;
-  Glib::RefPtr<Gtk::UIManager> refUIManager;
-  Gtk::VBox *const main_box;
+  Project *project;
+  ProjectWindow *parent;
 
-  /* Private method that
-   * creates the menu.
-   */
+
+  Glib::RefPtr<Gtk::UIManager> refUIManager;
+  Glib::RefPtr<Gtk::ActionGroup> refActionGroup;
+  Gtk::VBox *main_box;
+  Gtk::ScrolledWindow scrollview;
+
+  //Table for activities
+  Glib::RefPtr<Gtk::ListStore> ref_tree_model;
+  Gtk::TreeView *treeview;
+  Gtk::TreeModelColumn<time_t> *col_id;
+  Gtk::TreeModelColumn<std::string> *col_no;
+  Gtk::TreeModelColumn<std::string> *col_name;
+  Gtk::TreeModelColumn<std::string> *col_desc;
+  Gtk::TreeModelColumn<std::string> *col_start_date;
+  Gtk::TreeModelColumn<std::string> *col_end_date;
+  Gtk::TreeModelColumn<bool> *col_finished;
+
+  Gtk::Label *on_time_label, *late_label;
+
+  // Creates the menu, use to initialze
   void create_menu();
 
-  /* Callback method for
-   * menues.
-   */
+  // Signal handlers
+  void on_action_file_new();
+  void on_action_file_edit();
+  void on_action_file_delete();
   void on_action_file_exit();
+  void on_action_help_help();
   void on_action_help_about();
-  void on_action_project_properties();
-  void on_action_project_activities();
 };
 
 #endif
