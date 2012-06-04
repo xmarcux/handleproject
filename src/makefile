@@ -45,7 +45,7 @@ ui/neweditdialog.o : ui/mainwindow.h ui/projectwindow.h files.h project/project.
 ui/projectwindow.o : files.h project/project.h ui/projectwindow.h ui/about.h ui/neweditdialog.h ui/mainwindow.h ui/activitieswindow.h ui/projectwindow.cpp
 	$(CC) $(CFLAGS) ui/projectwindow.cpp -o ui/projectwindow.o $(GTKFLAGS)
 
-ui/activitieswindow.o : files.h project/project.h ui/about.h ui/projectwindow.h ui/activitieswindow.h ui/activitieswindow.cpp
+ui/activitieswindow.o : files.h project/project.h project/activity.h ui/about.h ui/projectwindow.h ui/activitieswindow.h ui/activitieswindow.cpp
 	$(CC) $(CFLAGS) ui/activitieswindow.cpp -o ui/activitieswindow.o $(GTKFLAGS)
 
 ui/splashwindow.o : ui/splashwindow.h ui/splashwindow.cpp

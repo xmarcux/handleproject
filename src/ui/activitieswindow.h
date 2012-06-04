@@ -66,10 +66,13 @@ class ActivitiesWindow : public Gtk::Window
   Gtk::TreeModelColumn<std::string> *col_end_date;
   Gtk::TreeModelColumn<bool> *col_finished;
 
-  Gtk::Label *on_time_label, *late_label;
+  Gtk::Label *proj_no_label, *proj_name_label;
 
   // Creates the menu, use to initialze
   void create_menu();
+
+  // Creates the main table where the activities are shown.
+  void create_activities_table();
 
   // Signal handlers
   void on_action_file_new();

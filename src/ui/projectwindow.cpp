@@ -41,6 +41,37 @@ ProjectWindow::ProjectWindow(time_t project_id, MainWindow *mainwindow)
   set_default_size(500, 300);
   set_position(Gtk::WIN_POS_CENTER);
   maximize();
+  /*
+  int no_act = 0;
+  int no_on_time = 0;
+  int no_finished = 0;
+  int no_late = 0;
+  std::list<Activity> act_list = project->get_activities();
+  for(std::list<Activity>::iterator it = act_list.begin(); it!=act_list.end(); it++)
+  {
+    no_act++;
+    if(it->is_finished())
+      no_finished++;
+    else if(it->is_late())
+      no_late++;
+    else
+      no_on_time++;
+  }
+
+  std::stringstream s1, s2, s3, s4;
+  s1 << no_act;
+  no_act_label = new Gtk::Label(_("No of activities: ") + s1.str());
+  s2 << no_on_time;
+  on_time_label = new Gtk::Label(_("Activities on time: ") + s2.str());
+  s3 << no_late;
+  late_label = new Gtk::Label(_("Late activites: ") + s3.str());
+  s4 << no_finished;
+  finished_label = new Gtk::Label(_("Finished activities: ") + s4.str());
+  Gtk::manage(no_act_label);
+  Gtk::manage(on_time_label);
+  Gtk::manage(late_label);
+  Gtk::manage(finished_label);
+*/
 }
 
 void ProjectWindow::update_view()
