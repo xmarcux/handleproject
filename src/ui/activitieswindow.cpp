@@ -22,6 +22,7 @@
 #include "../files.h"
 #include "about.h"
 #include "../project/activity.h"
+#include "activitydialog.h"
 #include <list>
 #include <glibmm/i18n.h>
 
@@ -183,7 +184,8 @@ void ActivitiesWindow::create_activities_table()
 
 void ActivitiesWindow::on_action_file_new()
 {
-
+  ActivityDialog ad(this);
+  ad.run();
 }
 
 void ActivitiesWindow::on_action_file_edit()
@@ -193,7 +195,47 @@ void ActivitiesWindow::on_action_file_edit()
 
 void ActivitiesWindow::on_action_file_delete()
 {
+  Glib::RefPtr<Gtk::TreeSelection> ref_tree_selection;
+  Gtk::TreeModel::iterator iter;
+  ref_tree_selection = treeview->get_selection();
+  iter = ref_tree_selection->get_selected();
+  if(iter)
+  {
+    Gtk::TreeModel::Row row = *iter;
+    Glib::ustring msg;
+    time_t act_id = row.get_value(*col_id);
+    msg = row.get_value(*col_no);
+    msg += "\n" + row.get_value(*col_name);
+    msg += "\n" + row.get_value(*col_desc);
+    
+    Gtk::MessageDialog delete_dialog(*this, "", false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
+    delete_dialog.set_message(_("Do you want to delete activity?"));
+    delete_dialog.set_secondary_text(msg);
+    int response = delete_dialog.run();
+    delete_dialog.hide();
+    if(response == Gtk::RESPONSE_YES)
+    {
+      if(project->remove_activity(act_id))
+      {
+	ref_tree_model->erase(iter);
+	Gtk::MessageDialog confirm_dialog(*this, "", false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_OK, true);
+	confirm_dialog.set_message(_("Activity deleted: "));
+	confirm_dialog.set_secondary_text(msg);
+	confirm_dialog.run();
+      }
+      else
+      {
+	Gtk::MessageDialog err_dialog(*this, "", false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+	err_dialog.set_message(_("Error: Can not delete activity: "));
+	err_dialog.set_secondary_text(msg);
+	err_dialog.run();
+	new_error("Error: Can not delete activity with id: " + act_id, 
+		  "activitieswindow.cpp", "void ActivitiesWindow::on_action_file_delete()");
+      }
+    }
 
+
+  }
 }
 
 void ActivitiesWindow::on_action_file_exit()

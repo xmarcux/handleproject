@@ -1,6 +1,7 @@
 OBJS = files.o main.o xmlstr.o date.o staff/staff.o staff/job.o \
 project/project.o project/activity.o ui/mainwindow.o ui/about.o \
-ui/neweditdialog.o ui/projectwindow.o ui/activitieswindow.o ui/splashwindow.o
+ui/neweditdialog.o ui/projectwindow.o ui/activitieswindow.o ui/activitydialog.o \
+ui/splashwindow.o
 CC = g++
 CFLAGS = -Wall -c
 LFLAGS = -Wall
@@ -45,8 +46,11 @@ ui/neweditdialog.o : ui/mainwindow.h ui/projectwindow.h files.h project/project.
 ui/projectwindow.o : files.h project/project.h ui/projectwindow.h ui/about.h ui/neweditdialog.h ui/mainwindow.h ui/activitieswindow.h ui/projectwindow.cpp
 	$(CC) $(CFLAGS) ui/projectwindow.cpp -o ui/projectwindow.o $(GTKFLAGS)
 
-ui/activitieswindow.o : files.h project/project.h project/activity.h ui/about.h ui/projectwindow.h ui/activitieswindow.h ui/activitieswindow.cpp
+ui/activitieswindow.o : files.h project/project.h project/activity.h ui/about.h ui/projectwindow.h ui/activitydialog.h ui/activitieswindow.h ui/activitieswindow.cpp
 	$(CC) $(CFLAGS) ui/activitieswindow.cpp -o ui/activitieswindow.o $(GTKFLAGS)
+
+ui/activitydialog.o : project/activity.h ui/activitieswindow.h ui/activitydialog.h ui/activitydialog.cpp
+	$(CC) $(CFLAGS) ui/activitydialog.cpp -o ui/activitydialog.o $(GTKFLAGS)
 
 ui/splashwindow.o : ui/splashwindow.h ui/splashwindow.cpp
 	$(CC) $(CFLAGS) ui/splashwindow.cpp -o ui/splashwindow.o $(GTKFLAGS)
