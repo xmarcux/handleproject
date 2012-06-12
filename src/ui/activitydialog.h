@@ -23,6 +23,9 @@
 
 #include <gtkmm/dialog.h>
 #include <gtkmm/window.h>
+#include <gtkmm/entry.h>
+#include <gtkmm/textview.h>
+#include <gtkmm/checkbutton.h>
 #include "../project/activity.h"
 #include "activitieswindow.h"
 
@@ -35,6 +38,14 @@ class ActivityDialog : public Gtk::Dialog
  private:
   ActivitiesWindow *parent;
   Activity *activity;
+
+  Gtk::Entry number_entry, name_entry, start_date_entry, end_date_entry;
+  Gtk::TextView desc_area;
+  Gtk::CheckButton check_button_finished;
+
+  void on_click_start_calendar();
+  void on_click_end_calendar();
+  void show_calendar(bool start_cal=true);
 };
 
 #endif

@@ -37,6 +37,7 @@
 #include <glibmm/ustring.h>
 
 
+
 NewEditDialog::NewEditDialog(MainWindow *parent, ProjectWindow *new_parent, Project *proj)
   : parent_window(parent), new_parent_window(new_parent)
 {

@@ -185,7 +185,6 @@ void ActivitiesWindow::create_activities_table()
 void ActivitiesWindow::on_action_file_new()
 {
   ActivityDialog ad(this);
-  ad.run();
 }
 
 void ActivitiesWindow::on_action_file_edit()
