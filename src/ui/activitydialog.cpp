@@ -26,6 +26,7 @@
 #include <gtkmm/table.h>
 #include <gtkmm/scrolledwindow.h>
 #include <gtkmm/calendar.h>
+#include <gtkmm/messagedialog.h>
 
 ActivityDialog::ActivityDialog(ActivitiesWindow *parent, Activity *activity)
   : parent(parent), activity(activity)
@@ -98,7 +99,45 @@ ActivityDialog::ActivityDialog(ActivitiesWindow *parent, Activity *activity)
   main_table.attach(check_button_finished, 1, 3, 9, 10);
 
   show_all_children();
-  run();
+  while(true)
+  {
+    int result = run();
+    if(result == Gtk::RESPONSE_OK)
+    {
+      Glib::ustring error_msg;
+      if(name_entry.get_text().size() == 0)
+	error_msg = _("Activity must have a name.\n");
+      if(start_date_entry.get_text().size() == 0)
+	error_msg += _("Activity must have a start date.\n");
+      if(end_date_entry.get_text().size() == 0)
+	error_msg += _("Activity must have an end date.");
+      if(error_msg.size() > 0)
+      {
+	  Gtk::MessageDialog message(error_msg, false, Gtk::MESSAGE_ERROR);
+	  message.set_icon_from_file("images/HaPr_high_80x100_ver2.gif");
+	  message.run();
+      }
+      else
+      {
+	Activity newa;
+	newa.set_number(number_entry.get_text());
+	newa.set_name(name_entry.get_text());
+	Glib::RefPtr<Gtk::TextBuffer> desc_buffer = desc_area.get_buffer();
+	newa.set_description(desc_buffer->get_text());
+	newa.set_start_date(start_date_entry.get_text());
+	newa.set_end_date(end_date_entry.get_text());
+	newa.set_finished(check_button_finished.get_active());
+
+	if(activity)
+	  newa.set_id(activity->get_id());
+
+	parent->add_edit_activity(&newa);
+	break;
+      }
+    }
+    else
+      break;
+  }
 }
 
 void ActivityDialog::on_click_start_calendar()

@@ -51,6 +51,41 @@ ActivitiesWindow::ActivitiesWindow(Project *proj, ProjectWindow *parent)
   main_box->pack_start(*infobar, Gtk::PACK_SHRINK);
 }
 
+void ActivitiesWindow::add_edit_activity(Activity *activity)
+{
+  project->add_activity(*activity);
+
+  bool activity_exists = false;
+  Gtk::TreeModel::Children iter = ref_tree_model->children();
+  for(Gtk::TreeModel::Children::iterator i = iter.begin(); i != iter.end(); i++)
+  {
+    Gtk::TreeModel::Row row = *i;
+    if(row[*col_id] == activity->get_id())
+    {
+      activity_exists = true;
+      row[*col_no] = activity->get_number();
+      row[*col_name] = activity->get_name();
+      row[*col_desc] = activity->get_description();
+      row[*col_start_date] = activity->get_start_date_str_eu();
+      row[*col_end_date] = activity->get_end_date_str_eu();
+      row[*col_finished] = activity->is_finished();
+    }
+  }
+  if(!activity_exists)
+  {
+    Gtk::TreeModel::Row row = *(ref_tree_model->append());
+    row[*col_id] = activity->get_id();
+    row[*col_no] = activity->get_number();
+    row[*col_name] = activity->get_name();
+    row[*col_desc] = activity->get_description();
+    row[*col_start_date] = activity->get_start_date_str_eu();
+    row[*col_end_date] = activity->get_end_date_str_eu();
+    row[*col_finished] = activity->is_finished();
+  }
+
+  parent->update_view();
+}
+
 void ActivitiesWindow::create_menu()
 {
   refActionGroup = Gtk::ActionGroup::create();

@@ -45,6 +45,15 @@ class ActivitiesWindow : public Gtk::Window
    */
   ActivitiesWindow(Project *proj, ProjectWindow *parent);
 
+  /* Method is used when a new activity
+   * is added or an activity has been 
+   * edited and needs saving.
+   * GUI is updated and project window
+   * will get noticed that it needs to
+   * update its GUI.
+   */
+  void add_edit_activity(Activity *activity);
+
  private:
   Project *project;
   ProjectWindow *parent;

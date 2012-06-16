@@ -318,7 +318,6 @@ void MainWindow::add_new_project(Project p)
 
 void MainWindow::update_project_view(Project *p)
 {
-  //TODO
   Gtk::TreeModel::Children iter = ref_tree_model->children();
   for(Gtk::TreeModel::Children::iterator i = iter.begin(); i != iter.end(); i++)
   {
