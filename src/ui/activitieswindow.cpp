@@ -224,7 +224,18 @@ void ActivitiesWindow::on_action_file_new()
 
 void ActivitiesWindow::on_action_file_edit()
 {
+  time_t a_id = 0;
+  Glib::RefPtr<Gtk::TreeSelection> ref_tree_selection;
+  Gtk::TreeModel::iterator iter;
+  
+  ref_tree_selection = treeview->get_selection();
+  iter = ref_tree_selection->get_selected();
 
+  Gtk::TreeModel::Row row = *iter;
+  a_id = row.get_value(*col_id);
+
+  Activity act = project->get_activity(a_id);
+  ActivityDialog ad(this, &act);
 }
 
 void ActivitiesWindow::on_action_file_delete()

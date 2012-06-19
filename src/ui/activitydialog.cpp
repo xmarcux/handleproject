@@ -18,9 +18,10 @@
  *                                                                          *
  ****************************************************************************/
 
+#include "activitydialog.h"
+#include <sstream>
 #include <glibmm/i18n.h>
 #include <glibmm/date.h>
-#include "activitydialog.h"
 #include <gtkmm/label.h>
 #include <gtkmm/box.h>
 #include <gtkmm/table.h>
@@ -36,6 +37,16 @@ ActivityDialog::ActivityDialog(ActivitiesWindow *parent, Activity *activity)
   {
     Gtk::Dialog(_("Edit activity"), parent);
     set_title(_("Edit activity"));
+    std::stringstream ss;
+    ss << activity->get_id();
+    number_entry.set_text(ss.str());
+    name_entry.set_text(activity->get_name());
+    
+    Glib::RefPtr<Gtk::TextBuffer> text_buffer = desc_area.get_buffer();
+    text_buffer->set_text(activity->get_description());
+    start_date_entry.set_text(activity->get_start_date_str_eu());
+    end_date_entry.set_text(activity->get_end_date_str_eu());
+    check_button_finished.set_active(activity->is_finished());
   }
   else
   {
