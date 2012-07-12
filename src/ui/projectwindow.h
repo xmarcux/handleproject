@@ -27,9 +27,14 @@
 #include <gtkmm/actiongroup.h>
 #include <gtkmm/uimanager.h>
 #include <gtkmm/box.h>
+#include <gtkmm/scrolledwindow.h>
+#include <gtkmm/liststore.h>
+#include <gtkmm/treeview.h>
+#include <gtkmm/treemodelcolumn.h>
 #include <glibmm/refptr.h>
-
-//#include <gtkmm/treemodelcolumn.h>
+#include <gtkmm/cellrenderer.h>
+#include <gtkmm/treemodel.h>
+//#include <vector>//remove?
 
 /* This class is the window that
  * shows one specific project.
@@ -58,11 +63,37 @@ class ProjectWindow : public Gtk::Window
   Glib::RefPtr<Gtk::ActionGroup> refActionGroup;
   Glib::RefPtr<Gtk::UIManager> refUIManager;
   Gtk::VBox *const main_box;
+  Gtk::ScrolledWindow scrollview;
+  
+  //Table showing activities.
+  //  std::vector<Gtk::VBox> vbox_months;//remove?
+  //  std::vector<Gtk::TreeView *> treeview_months;//remove?
+  // std::vector<Gtk::Label *> label_months;//remove?
+
+  Glib::RefPtr<Gtk::ListStore> ref_tree_model;
+  Gtk::TreeView *treeview;
+  // Gtk::TreeView *treeview_month;//remove?
+  Gtk::TreeModelColumn<time_t> *col_id;
+  Gtk::TreeModelColumn<std::string> *col_name;
+  Gtk::HBox table_box, main_table_box;
+  Gtk::VBox activity_box;
 
   /* Private method that
    * creates the menu.
    */
   void create_menu();
+
+  void create_view();
+
+  /* Creates the table for a month.
+   * starting_day is the day in the 
+   * month where table should start.
+   * month is the current month 1-12.
+   * year is the current year with 4 digets i.e 2012
+   * Returns a pointer to a treview
+   * containing table.
+   */
+  Gtk::TreeView * create_month_view(int starting_day, int month, int year);
 
   /* Callback method for
    * menues.
