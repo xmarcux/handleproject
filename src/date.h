@@ -72,6 +72,12 @@ class Date
   int get_end_month() const;
   int get_end_day() const;
 
+  /* Returns true if argument date
+   * is between or equal to start and
+   * end date.
+   */
+  bool between_dates(int y, int m, int d) const;
+
   /* Returns a string in format: YYYY-MM-DD */
   std::string get_start_date_str_eu() const;
 

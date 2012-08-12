@@ -30,7 +30,7 @@ ActivitiesWindow::ActivitiesWindow(Project *proj, ProjectWindow *parent)
   : project(proj), parent(parent), main_box(new Gtk::VBox(false, 0))
 {
   set_title(_("Edit activities"));
-  set_icon_from_file("images/HaPr_high_80x100_ver2.gif");
+  set_icon_from_file("images/act100x80.gif");
   add(*Gtk::manage(main_box));
   set_size_request(200, 200);
   set_default_size(500, 300);

@@ -32,7 +32,7 @@
 ActivityDialog::ActivityDialog(ActivitiesWindow *parent, Activity *activity)
   : parent(parent), activity(activity)
 {
-  set_icon_from_file("images/HaPr_high_80x100_ver2.gif");
+  set_icon_from_file("images/act100x80.gif");
   if(activity)
   {
     Gtk::Dialog(_("Edit activity"), parent);

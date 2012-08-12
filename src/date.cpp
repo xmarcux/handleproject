@@ -91,6 +91,41 @@ int Date::get_end_day() const
   return end_day;
 }
 
+bool Date::between_dates(int y, int m, int d) const
+{
+  if(y > start_year && y < end_year)
+    return true;
+  else if((y == start_year && y == end_year) && (m > start_month && m < end_month))
+    return true;
+  else if((y == start_year && y == end_year) && 
+	  (m == start_month && m < end_month) &&
+	  (d >= start_day))
+    return true;
+  else if((y == start_year && y == end_year) && 
+	  (m == start_month && m == end_month)&&
+	  (d >= start_day && d <= end_day))
+    return true;
+  else if((y == start_year && y == end_year) &&
+	  (m > start_month && m == end_month) &&
+	  (d <= end_day))
+    return true;
+  else if((y == start_year && y < end_year) &&
+	  (m > start_month))
+    return true;
+  else if((y == start_year && y < end_year) &&
+	  (m == start_month && d >= start_day))
+    return true;
+  else if((y > start_year && y == end_year) &&
+	  (m < end_month))
+    return true;
+  else if((y > start_year && y == end_year) &&
+	  ( m == end_month && d <= end_month))
+    return true;
+  else
+    return false;
+	  
+}
+
 std::string Date::get_start_date_str_eu() const
 {
   std::stringstream ss;

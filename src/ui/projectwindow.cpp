@@ -26,14 +26,15 @@
 #include <ctime>
 #include <sstream>
 #include <map>
+#include <list>
 #include <glibmm/i18n.h>
 #include <gtkmm/stock.h>
 
 #define COLOR_ON_TIME         "#00FF00"
 #define COLOR_LATE            "#FF0000"
 #define COLOR_WHITE           "#FFFFFF"
-#define COLOR_HISTORY         "#CCCCCC"
-#define COLOR_HISTORY_ON_TIME "#99CC99"
+#define COLOR_HISTORY         "#999999"
+#define COLOR_HISTORY_ON_TIME "#339900"
 
 ProjectWindow::ProjectWindow(time_t project_id, MainWindow *mainwindow)
   : project("", "", ""), mainwindow(mainwindow), main_box(new Gtk::VBox(false, 0))
@@ -41,7 +42,7 @@ ProjectWindow::ProjectWindow(time_t project_id, MainWindow *mainwindow)
   project = get_project_from_db(project_id);
   set_title("Handle Project\t" + (_("Project number: ") + project.get_project_no()) +
 	    _("\tProject name: ") + project.get_project_name());
-  set_icon_from_file("images/HaPr_high_80x100_ver2.gif");
+  set_icon_from_file("images/Proj100x80.gif");
   set_position(Gtk::WIN_POS_CENTER);
   add(*Gtk::manage(main_box));
   create_menu();
@@ -182,7 +183,7 @@ void ProjectWindow::create_view()
   Gtk::TreeModelColumn<time_t> *col_id = new Gtk::TreeModelColumn<time_t>();
   Gtk::TreeModelColumn<std::string> *col_name = new Gtk::TreeModelColumn<std::string>();
 
-  while(!((start_month > end_month) && (start_year == end_year)))
+  while(!((start_month > end_month && start_year == end_year)||(end_month == 12 && start_year > end_year)))
   {
     std::stringstream ss;
     ss << start_year << " - ";
@@ -216,7 +217,7 @@ void ProjectWindow::create_view()
     box->set_border_width(1);
     box->pack_start(*label, Gtk::PACK_SHRINK);
 
-    if(start_month == project.get_start_month())
+    if(start_year == project.get_start_year() && start_month == project.get_start_month())
       box->pack_start(*create_month_view(project.get_start_day(), start_month, start_year));
     else
       box->pack_start(*create_month_view(1, start_month, start_year));
@@ -283,11 +284,12 @@ Gtk::TreeView * ProjectWindow::create_month_view(int starting_day, int month, in
   tm_wday->tm_year = year - 1900;
   rawtime = mktime(tm_wday);
   tm_wday = localtime(&rawtime);
-  int wday;
+  int wday, wday_color;
   if(tm_wday->tm_wday == 0)
     wday = 7;
   else
     wday = tm_wday->tm_wday;
+  wday_color = wday;
 
   Gtk::TreeView *treeview = new Gtk::TreeView();
   Gtk::TreeModel::ColumnRecord *col_record = new Gtk::TreeModel::ColumnRecord();
@@ -300,8 +302,10 @@ Gtk::TreeView * ProjectWindow::create_month_view(int starting_day, int month, in
   if(!(month > end_month && year > end_year))
   {
     int month_stop;
-    if(month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || 
-       month == 10 || month == 12)
+    if(month == end_month && year == end_year)
+      month_stop = end_day;
+    else if(month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || 
+	    month == 10 || month == 12)
       month_stop = 31;
     else if(month == 2)
     {
@@ -340,31 +344,72 @@ Gtk::TreeView * ProjectWindow::create_month_view(int starting_day, int month, in
   treeview->set_model(ref_tree_model);
   treeview->set_grid_lines(Gtk::TREE_VIEW_GRID_LINES_BOTH);  
 
-  int no_of_activities = project.get_activities().size();
+  std::list<Activity> actlist = project.get_activities();
   int mday = starting_day;
+  int wday_count = wday_color;
 
   Gtk::TreeModel::Row row;
-  for(int i=0; i<no_of_activities; i++)
+  std::list<Activity>::iterator i;
+  for(i = actlist.begin(); i != actlist.end(); i++)
   {
+    Activity a = *i;
+    mday = starting_day;
+    wday_count = wday_color;
     row = *(ref_tree_model->append());
     for(uint k=0; k<m_column.size(); k++)
     {
+      if(wday_count > days_per_week)
+      {
+	mday = mday + 3 - ( wday_count - days_per_week);
+	wday_count = 1;
+      }
+
       row[*(m_column[k])] = " ";
-      if(now_year > year)
-	row[*(m_color[k])] = COLOR_HISTORY;
+      if(a.is_late() && a.between_dates(year, month, mday))
+	row[*(m_color[k])] = COLOR_LATE;
+      else if(now_year > year)
+      {
+	if(a.between_dates(year, month, mday))
+	  row[*(m_color[k])] = COLOR_HISTORY_ON_TIME;
+	else
+	  row[*(m_color[k])] = COLOR_HISTORY;
+      }
       else if(now_year == year && now_month > month)
-	row[*(m_color[k])] = COLOR_HISTORY;
+      {
+	if(a.between_dates(year, month, mday))
+	  row[*(m_color[k])] = COLOR_HISTORY_ON_TIME;
+	else
+	  row[*(m_color[k])] = COLOR_HISTORY;
+      }
       else if(now_year == year && now_month == month && now_day > mday)
-	row[*(m_color[k])] = COLOR_HISTORY;
+      {
+	if(a.between_dates(year, month, mday))
+	  row[*(m_color[k])] = COLOR_HISTORY_ON_TIME;
+	else
+	  row[*(m_color[k])] = COLOR_HISTORY;
+      }
       else
-	row[*(m_color[k])] = COLOR_WHITE;
+      {
+	if(a.between_dates(year, month, mday))
+	   row[*(m_color[k])] = COLOR_ON_TIME;
+	else
+	  row[*(m_color[k])] = COLOR_WHITE;
+      }
       Gtk::TreeViewColumn *view_col = treeview->get_column(k);
       Gtk::CellRenderer *renderer = view_col->get_first_cell_renderer();
       view_col->add_attribute(renderer->property_cell_background(), *(m_color[k]));
-      mday++;
+      if(wday_count < days_per_week)
+      {
+	mday++;
+	wday_count++;
+      }
+      else
+      {
+	mday = mday + 3 - ( wday_count - days_per_week);
+	wday_count = 1;
+      }
     }
   }
-
   return treeview;
 }
 
