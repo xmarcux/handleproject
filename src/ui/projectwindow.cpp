@@ -32,9 +32,11 @@
 
 #define COLOR_ON_TIME         "#00FF00"
 #define COLOR_LATE            "#FF0000"
+#define COLOR_FINISHED        "#0000FF"
+#define COLOR_HISTORY_ON_TIME "#339900"
 #define COLOR_WHITE           "#FFFFFF"
 #define COLOR_HISTORY         "#999999"
-#define COLOR_HISTORY_ON_TIME "#339900"
+
 
 ProjectWindow::ProjectWindow(time_t project_id, MainWindow *mainwindow)
   : project("", "", ""), mainwindow(mainwindow), main_box(new Gtk::VBox(false, 0))
@@ -47,42 +49,12 @@ ProjectWindow::ProjectWindow(time_t project_id, MainWindow *mainwindow)
   add(*Gtk::manage(main_box));
   create_menu();
   create_view();
+  create_status_bar();
 
   set_size_request(200, 200);
   set_default_size(500, 300);
   set_position(Gtk::WIN_POS_CENTER);
   maximize();
-  /*
-  int no_act = 0;
-  int no_on_time = 0;
-  int no_finished = 0;
-  int no_late = 0;
-  std::list<Activity> act_list = project->get_activities();
-  for(std::list<Activity>::iterator it = act_list.begin(); it!=act_list.end(); it++)
-  {
-    no_act++;
-    if(it->is_finished())
-      no_finished++;
-    else if(it->is_late())
-      no_late++;
-    else
-      no_on_time++;
-  }
-
-  std::stringstream s1, s2, s3, s4;
-  s1 << no_act;
-  no_act_label = new Gtk::Label(_("No of activities: ") + s1.str());
-  s2 << no_on_time;
-  on_time_label = new Gtk::Label(_("Activities on time: ") + s2.str());
-  s3 << no_late;
-  late_label = new Gtk::Label(_("Late activites: ") + s3.str());
-  s4 << no_finished;
-  finished_label = new Gtk::Label(_("Finished activities: ") + s4.str());
-  Gtk::manage(no_act_label);
-  Gtk::manage(on_time_label);
-  Gtk::manage(late_label);
-  Gtk::manage(finished_label);
-*/
 }
 
 void ProjectWindow::update_view()
@@ -367,6 +339,10 @@ Gtk::TreeView * ProjectWindow::create_month_view(int starting_day, int month, in
       row[*(m_column[k])] = " ";
       if(a.is_late() && a.between_dates(year, month, mday))
 	row[*(m_color[k])] = COLOR_LATE;
+      else if(a.is_finished() && a.between_dates(year, month, mday) &&
+	      ((year >= now_year && month >= now_month && mday >= now_day) ||
+	      (year >= now_year && month > now_month)))
+	row[*(m_color[k])] = COLOR_FINISHED;
       else if(now_year > year)
       {
 	if(a.between_dates(year, month, mday))
@@ -411,6 +387,47 @@ Gtk::TreeView * ProjectWindow::create_month_view(int starting_day, int month, in
     }
   }
   return treeview;
+}
+
+void ProjectWindow::create_status_bar()
+{
+  int no_act = 0;
+  int no_on_time = 0;
+  int no_finished = 0;
+  int no_late = 0;
+  std::list<Activity> act_list = project.get_activities();
+  for(std::list<Activity>::iterator it = act_list.begin(); it!=act_list.end(); it++)
+  {
+    no_act++;
+    if(it->is_finished())
+      no_finished++;
+    else if(it->is_late())
+      no_late++;
+    else
+      no_on_time++;
+  }
+
+  std::stringstream s1, s2, s3, s4;
+  s1 << no_act;
+  no_act_label = new Gtk::Label(_("No of activities: ") + s1.str());
+  s2 << no_on_time;
+  on_time_label = new Gtk::Label(_("Activities on time: ") + s2.str());
+  s3 << no_late;
+  late_label = new Gtk::Label(_("Late activites: ") + s3.str());
+  s4 << no_finished;
+  finished_label = new Gtk::Label(_("Finished activities: ") + s4.str());
+  
+  Gtk::manage(no_act_label);
+  Gtk::manage(on_time_label);
+  Gtk::manage(late_label);
+  Gtk::manage(finished_label);
+  
+  status_box.pack_start(*no_act_label);
+  status_box.pack_start(*on_time_label);
+  status_box.pack_start(*late_label);
+  status_box.pack_start(*finished_label);
+  
+  main_box->pack_start(status_box, Gtk::PACK_SHRINK, 5);
 }
 
 void ProjectWindow::on_action_file_exit()

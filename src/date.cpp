@@ -119,7 +119,7 @@ bool Date::between_dates(int y, int m, int d) const
 	  (m < end_month))
     return true;
   else if((y > start_year && y == end_year) &&
-	  ( m == end_month && d <= end_month))
+	  ( m == end_month && d <= end_day))
     return true;
   else
     return false;
