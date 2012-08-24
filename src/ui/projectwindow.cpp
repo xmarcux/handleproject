@@ -47,7 +47,15 @@ ProjectWindow::ProjectWindow(time_t project_id, MainWindow *mainwindow)
   set_icon_from_file("images/Proj100x80.gif");
   set_position(Gtk::WIN_POS_CENTER);
   add(*Gtk::manage(main_box));
+
   create_menu();
+
+  scrollview.add(main_table_box);
+  scrollview.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+  table_box.pack_start(activity_box, Gtk::PACK_SHRINK);
+  table_box.pack_start(scrollview);
+  main_box->pack_start(table_box);
+
   create_view();
   create_status_bar();
 
@@ -61,6 +69,46 @@ void ProjectWindow::update_view()
 {
   set_title("Handle Project\t" + (_("Project number: ") + project.get_project_no()) +
 	    _("\tProject name: ") + project.get_project_name());
+
+  update_activity_view();
+  create_view();
+}
+
+void ProjectWindow::update_activity_view()
+{
+  update_status_bar();
+  create_view();
+}
+
+void ProjectWindow::update_status_bar()
+{
+  int no_act = 0;
+  int no_late = 0;
+  int no_on_time = 0;
+  int no_finished = 0;
+
+  std::list<Activity> act_list = project.get_activities();
+  for(std::list<Activity>::iterator it = act_list.begin(); it != act_list.end(); it++)
+  {
+    no_act++;
+    if(it->is_finished())
+      no_finished++;
+    else if(it->is_late())
+      no_late++;
+    else
+      no_on_time++;
+  }
+
+  std::stringstream s1, s2, s3, s4;
+  s1 << no_act;
+  s2 << no_late;
+  s3 << no_on_time;
+  s4 << no_finished;
+
+  no_act_label->set_text(_("Number of activities: ") + s1.str());
+  late_label->set_text(_("Late activities: ") + s2.str());
+  on_time_label->set_text(_("Activities on time: ") + s3.str());
+  finished_label->set_text(_("Finished activities: ") + s4.str());
 }
 
 void ProjectWindow::create_menu()
@@ -144,11 +192,19 @@ void ProjectWindow::create_view()
   int end_month = project.get_end_month();
   int end_year = project.get_end_year();
 
-  scrollview.add(main_table_box);
-  scrollview.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
-  table_box.pack_start(activity_box, Gtk::PACK_SHRINK);
-  table_box.pack_start(scrollview);
-  main_box->pack_start(table_box);
+  std::vector<Gtk::TreeView* >::iterator it_view;
+  for(it_view=month_tables.begin(); it_view!=month_tables.end(); it_view++)
+  {
+    delete (*it_view);
+  }
+  month_tables.clear();
+
+  std::vector<Gtk::VBox* >::iterator it_box;
+  for(it_box=table_boxes.begin(); it_box!=table_boxes.end(); it_box++)
+  {
+    delete (*it_box);
+  }
+  table_boxes.clear();
 
   //The table
   Gtk::TreeModel::ColumnRecord *col_record = new Gtk::TreeModel::ColumnRecord();
@@ -186,6 +242,7 @@ void ProjectWindow::create_view()
       label->set_text(ss.str() + _("December"));
 
     Gtk::VBox *box = new Gtk::VBox();
+    table_boxes.push_back(box);
     box->set_border_width(1);
     box->pack_start(*label, Gtk::PACK_SHRINK);
 
@@ -212,6 +269,7 @@ void ProjectWindow::create_view()
 
   treeview = new Gtk::TreeView();
   Gtk::manage(treeview);
+  month_tables.push_back(treeview);
 
   ref_tree_model = Gtk::ListStore::create(*col_record);
   treeview->set_model(ref_tree_model);
@@ -219,9 +277,13 @@ void ProjectWindow::create_view()
   treeview->append_column(_("Activity"), *col_name);
 
   activity_box.set_border_width(2);
-  Gtk::Label *act_label = new Gtk::Label(_("Activities"));
-  Gtk::manage(act_label);
-  activity_box.pack_start(*act_label, Gtk::PACK_SHRINK);
+
+  if(act_label == 0)
+  {
+    act_label = new Gtk::Label(_("Activities"));
+    Gtk::manage(act_label);
+    activity_box.pack_start(*act_label, Gtk::PACK_SHRINK);
+  }
   activity_box.pack_start(*treeview);
 
   std::list<Activity> act_list = project.get_activities();
@@ -232,6 +294,7 @@ void ProjectWindow::create_view()
     row[*col_id] = iter->get_id();
     row[*col_name] = iter->get_name();
   }
+  show_all_children();
 }
 
 Gtk::TreeView * ProjectWindow::create_month_view(int starting_day, int month, int year)
@@ -386,6 +449,8 @@ Gtk::TreeView * ProjectWindow::create_month_view(int starting_day, int month, in
       }
     }
   }
+  Gtk::manage(treeview);
+  month_tables.push_back(treeview);
   return treeview;
 }
 
@@ -409,7 +474,7 @@ void ProjectWindow::create_status_bar()
 
   std::stringstream s1, s2, s3, s4;
   s1 << no_act;
-  no_act_label = new Gtk::Label(_("No of activities: ") + s1.str());
+  no_act_label = new Gtk::Label(_("Number of activities: ") + s1.str());
   s2 << no_on_time;
   on_time_label = new Gtk::Label(_("Activities on time: ") + s2.str());
   s3 << no_late;

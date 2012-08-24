@@ -35,6 +35,8 @@
 #include <gtkmm/cellrenderer.h>
 #include <gtkmm/treemodel.h>
 #include <gtkmm/label.h>
+#include <map>
+#include <vector>
 
 /* This class is the window that
  * shows one specific project.
@@ -52,9 +54,15 @@ class ProjectWindow : public Gtk::Window
   ProjectWindow(time_t project_id, MainWindow *mainwindow);
 
   /* Updates the GUI if properites
-   * of project has been changed.
+   * for project has been changed.
    */
   void update_view();
+
+  /* Updates the GUI if properties
+   * for activities has been changed.
+   */
+  void update_activity_view();
+
   virtual ~ProjectWindow();
 
  private:
@@ -70,7 +78,12 @@ class ProjectWindow : public Gtk::Window
   Gtk::TreeModelColumn<std::string> *col_name;
   Gtk::HBox table_box, main_table_box, status_box;
   Gtk::VBox activity_box;
-  Gtk::Label *no_act_label, *on_time_label, *late_label, *finished_label;
+  Gtk::Label *act_label, *no_act_label, *on_time_label, *late_label, *finished_label;
+  std::vector<Gtk::TreeView* > month_tables;
+  std::vector<Gtk::VBox* > table_boxes;
+
+  /* Updates values for the statusbar */
+  void update_status_bar();
 
   /* Private method that
    * creates the menu.
